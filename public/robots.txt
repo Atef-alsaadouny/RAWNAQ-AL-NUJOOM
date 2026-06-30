@@ -1,0 +1,11 @@
+User-agent: *
+Disallow:
+
+Sitemap: /sitemap.xml
+
+# Disallow authenticated sections
+Disallow: /customer/
+Disallow: /employee/
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
