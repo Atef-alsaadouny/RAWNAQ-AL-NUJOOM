@@ -13,19 +13,19 @@ if [ -z "$CURRENT_KEY" ] || [ "$CURRENT_KEY" = "base64:" ]; then
 fi
 
 echo "Caching config..."
-php artisan config:cache
+php artisan config:cache 2>&1
 
 echo "Caching routes..."
-php artisan route:cache 2>/dev/null || true
+php artisan route:cache 2>&1 || true
 
 echo "Caching views..."
-php artisan view:cache 2>/dev/null || true
+php artisan view:cache 2>&1 || true
 
 echo "Storage link..."
-php artisan storage:link --force 2>/dev/null || true
+php artisan storage:link --force 2>&1 || true
 
 echo "Running migrations..."
-php artisan migrate --force 2>/dev/null || true
+php artisan migrate --force 2>&1 || true
 
 echo "Setup complete. Starting Apache..."
 
