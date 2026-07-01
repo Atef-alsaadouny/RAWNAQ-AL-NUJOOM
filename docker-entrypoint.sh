@@ -21,6 +21,12 @@ php artisan route:cache 2>/dev/null || true
 echo "Caching views..."
 php artisan view:cache 2>/dev/null || true
 
+echo "Storage link..."
+php artisan storage:link --force 2>/dev/null || true
+
+echo "Running migrations..."
+php artisan migrate --force 2>/dev/null || true
+
 echo "Setup complete. Starting Apache..."
 
 exec "$@"
