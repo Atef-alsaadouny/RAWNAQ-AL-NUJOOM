@@ -29,15 +29,6 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable(); // تاريخ إنشاء التوكن
         });
 
-        // إنشاء جدول جلسات المستخدمين
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary(); // معرف الجلسة (مفتاح رئيسي)
-            $table->foreignId('user_id')->nullable()->index(); // معرف المستخدم (مفتاح خارجي)
-            $table->string('ip_address', 45)->nullable(); // عنوان IP الخاص بالمستخدم
-            $table->text('user_agent')->nullable(); // معلومات متصفح المستخدم
-            $table->longText('payload'); // بيانات الجلسة
-            $table->integer('last_activity')->index(); // آخر نشاط (timestamp)
-        });
     }
 
     /**
@@ -47,6 +38,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };
