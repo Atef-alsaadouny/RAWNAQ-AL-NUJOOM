@@ -248,7 +248,7 @@
                     <textarea name="cancel_reason" rows="3" placeholder="{{ __('Cancellation reason (optional)') }}"
                         class="w-full border-2 border-red-200 rounded-xl px-4 py-3 text-sm focus:ring-0 focus:border-red-400 focus:bg-red-50/50 transition-all duration-200 resize-none"></textarea>
                     <button type="submit"
-                        class="mt-3 w-full bg-red-500 text-white py-3 rounded-xl font-bold text-[15px] hover:bg-red-600 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                        class="mt-3 w-full bg-emerald-500 text-white py-3 rounded-xl font-bold text-[15px] hover:bg-emerald-600 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
                         {{ __('Confirm Cancellation') }}
                     </button>
                 </form>

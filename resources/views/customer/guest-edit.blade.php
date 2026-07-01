@@ -207,8 +207,8 @@
                     @if(request('token'))<input type="hidden" name="token" value="{{ request('token') }}">@endif
                     <textarea name="cancel_reason" id="cancelReasonEdit" rows="2" class="w-full border-2 border-red-200 rounded-xl px-4 py-3 text-sm focus:ring-0 focus:border-red-400 focus:bg-red-50/50 transition-all duration-200 resize-none" placeholder="{{ __('Is there a reason for cancellation?') }}"></textarea>
                     <div class="flex gap-3 mt-3">
-                        <button type="button" onclick="confirmCancelEdit()" class="flex-1 bg-red-600 text-white py-2.5 rounded-xl font-bold hover:bg-red-700 transition text-sm">{{ __('Confirm Cancellation') }}</button>
-                        <button type="button" onclick="document.getElementById('cancelBoxEdit').classList.add('hidden')" class="flex-1 bg-emerald-500 text-white py-2.5 rounded-xl font-bold hover:bg-emerald-600 transition text-sm">{{ __('Undo') }}</button>
+                        <button type="button" onclick="confirmCancelEdit()" class="flex-1 bg-emerald-500 text-white py-2.5 rounded-xl font-bold hover:bg-emerald-600 transition text-sm">{{ __('Confirm Cancellation') }}</button>
+                        <button type="button" onclick="document.getElementById('cancelBoxEdit').classList.add('hidden')" class="flex-1 bg-red-500 text-white py-2.5 rounded-xl font-bold hover:bg-red-600 transition text-sm">{{ __('Undo') }}</button>
                     </div>
                 </form>
             </div>
