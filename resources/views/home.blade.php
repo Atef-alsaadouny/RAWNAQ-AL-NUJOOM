@@ -99,7 +99,7 @@
                         </div>
                         <div>
                             <p class="font-medium text-gray-700 text-sm">{{ __('Phone') }}</p>
-                            <p class="text-gray-500 text-sm">+965 1234 5678</p>
+                            <p class="text-gray-500 text-sm" dir="ltr">{{ config('app.phone') }}</p>
                         </div>
                     </div>
                 </div>
