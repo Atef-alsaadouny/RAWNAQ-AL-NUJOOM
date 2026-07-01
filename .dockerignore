@@ -1,0 +1,11 @@
+node_modules
+vendor
+.git
+.gitignore
+.gitattributes
+.env.backup
+.docker
+.idea
+.vscode
+*.md
+.DS_Store
