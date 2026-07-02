@@ -52,7 +52,7 @@ class AdminController extends Controller
         $stats = $this->dashboardStats($businessId, $today);
 
         $recentAppointments = Appointment::forBusiness($businessId)
-            ->with(['customer', 'employee', 'employees', 'services', 'rating'])
+            ->with(['customer', 'employee', 'employees', 'services', 'packages', 'rating'])
             ->latest()
             ->take(10)
             ->get();
@@ -126,7 +126,7 @@ class AdminController extends Controller
         ];
 
         $recentAppointments = Appointment::forBusiness($businessId)
-            ->with(['customer', 'employee', 'employees', 'services', 'rating'])
+            ->with(['customer', 'employee', 'employees', 'services', 'packages', 'rating'])
             ->latest()
             ->take(10)
             ->get();

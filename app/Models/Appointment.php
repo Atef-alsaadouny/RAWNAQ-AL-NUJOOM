@@ -79,7 +79,7 @@ class Appointment extends Model
         }
         self::$alreadyExpired = true;
 
-        $expired = static::whereDate('appointment_date', '<', now())
+        $expired = static::whereDate('appointment_date', '<', now()->toDateString())
             ->whereIn('status', self::EDITABLE_STATUSES)
             ->get();
 
