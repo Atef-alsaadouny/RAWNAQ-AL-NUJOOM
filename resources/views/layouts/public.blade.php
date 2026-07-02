@@ -130,11 +130,11 @@
                      </a>
                     @auth
                         @if(auth()->user()->isAdmin() || auth()->user()->isOwner())
-                            <a href="{{ route('admin.dashboard') }}" class="text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('Admin Panel') }}</a>
+                            <a href="{{ route('admin.dashboard') }}" class="hidden md:inline-flex text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('Admin Panel') }}</a>
                         @elseif(auth()->user()->isEmployee())
-                            <a href="{{ route('employee.dashboard') }}" class="text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('Employee Dashboard') }}</a>
+                            <a href="{{ route('employee.dashboard') }}" class="hidden md:inline-flex text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('Employee Dashboard') }}</a>
                         @else
-                            <a href="{{ route('customer.profile') }}" class="text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('My Account') }}</a>
+                            <a href="{{ route('customer.profile') }}" class="hidden md:inline-flex text-rose-600 hover:text-rose-700 font-medium px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-rose-50 transition-all duration-200 text-xs md:text-sm">{{ __('My Account') }}</a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
