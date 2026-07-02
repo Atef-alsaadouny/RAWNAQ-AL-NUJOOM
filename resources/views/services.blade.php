@@ -43,7 +43,7 @@
             </button>
             @foreach($categories as $cat => $catServices)
             <button class="cat-btn px-5 py-2 rounded-full text-sm font-medium border-2 border-gray-200 text-gray-600 hover:border-rose-200 hover:text-rose-600 transition-all" data-cat="{{ $cat }}">
-                {{ $cat }}
+                {{ __($cat) }}
             </button>
             @endforeach
         </div>

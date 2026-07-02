@@ -49,6 +49,41 @@
                         @enderror
                     </div>
                 </div>
+
+                <div class="mt-5 pt-4 border-t border-rose-200/60">
+                    <label class="flex items-start gap-3 cursor-pointer group" for="create_account">
+                        <input type="checkbox" name="create_account" value="1" id="create_account"
+                               class="mt-0.5 w-5 h-5 rounded border-gray-300 text-rose-500 focus:ring-rose-400 focus:ring-2 cursor-pointer shrink-0">
+                        <div class="select-none">
+                            <span class="font-medium text-gray-800 text-sm group-hover:text-rose-600 transition-colors">
+                                {{ __('Create an account to save your data for next time') }}
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                                {{ __('Register with one click to save your data, and easily manage or modify your upcoming bookings!') }}
+                            </p>
+                        </div>
+                    </label>
+
+                    <div id="accountFields" class="mt-4 space-y-4 hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-bold text-sm mb-2">{{ __('Email') }} <span class="text-gray-400 font-normal">({{ __('Optional') }})</span></label>
+                                <input type="email" name="email" autocomplete="email" value="{{ old('email') }}"
+                                       class="w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:ring-0 focus:border-rose-300 focus:bg-rose-50/20 transition-all duration-200" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold text-sm mb-2">{{ __('Password') }} <span class="text-red-500">*</span></label>
+                                <input type="password" name="password" autocomplete="new-password"
+                                       class="w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:ring-0 focus:border-rose-300 focus:bg-rose-50/20 transition-all duration-200">
+                            </div>
+                        </div>
+                        <div class="md:w-1/2">
+                            <label class="block text-gray-700 font-bold text-sm mb-2">{{ __('Confirm Password') }} <span class="text-red-500">*</span></label>
+                            <input type="password" name="password_confirmation" autocomplete="new-password"
+                                   class="w-full border-2 border-gray-100 rounded-2xl px-5 py-3.5 focus:ring-0 focus:border-rose-300 focus:bg-rose-50/20 transition-all duration-200">
+                        </div>
+                    </div>
+                </div>
             </div>
             @elseif(auth()->user()->isCustomer())
             <div class="mb-8 bg-gradient-to-br from-rose-50 to-amber-50/30 border border-rose-100/50 rounded-2xl px-5 py-4 text-sm text-gray-600 flex items-center gap-3">
@@ -534,5 +569,38 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePriceSummary();
 });
 @endif
+
+{{-- Account creation toggle --}}
+document.addEventListener('DOMContentLoaded', function() {
+    var cb = document.getElementById('create_account');
+    var fields = document.getElementById('accountFields');
+    if (cb && fields) {
+        if (cb.checked) {
+            fields.classList.remove('hidden');
+            fields.style.opacity = '1';
+            fields.style.transform = 'translateY(0)';
+        }
+        cb.addEventListener('change', function() {
+            if (this.checked) {
+                fields.classList.remove('hidden');
+                fields.style.opacity = '0';
+                fields.style.transform = 'translateY(-8px)';
+                fields.style.transition = 'none';
+                requestAnimationFrame(function() {
+                    fields.style.transition = 'all 0.3s ease-out';
+                    fields.style.opacity = '1';
+                    fields.style.transform = 'translateY(0)';
+                });
+            } else {
+                fields.style.opacity = '0';
+                fields.style.transform = 'translateY(-8px)';
+                fields.style.transition = 'all 0.2s ease-in';
+                setTimeout(function() {
+                    fields.classList.add('hidden');
+                }, 200);
+            }
+        });
+    }
+});
 </script>
 @endsection

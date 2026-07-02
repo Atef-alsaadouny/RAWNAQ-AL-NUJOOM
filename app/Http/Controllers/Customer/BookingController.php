@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -122,6 +123,12 @@ class BookingController extends Controller
             $request->merge(['customer_phone' => normalizeArabicDigits($request->customer_phone)]);
             $rules['customer_name'] = 'required|string|max:255';
             $rules['customer_phone'] = ['required', 'regex:/^(?:[4569]\d{7}|\+965\d{8})$/'];
+
+            if ($request->boolean('create_account')) {
+                $rules['password'] = ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()];
+                $rules['email'] = ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class];
+                $rules['customer_phone'][] = 'unique:' . User::class . ',phone';
+            }
         }
 
         $request->validate($rules, [
@@ -202,8 +209,31 @@ class BookingController extends Controller
 
             $this->appointmentService->createPayment($appointment, $paymentMethod);
 
+            if (!Auth::check() && $request->boolean('create_account') && $request->filled('password')) {
+                $user = User::create([
+                    'name' => $data['customer_name'],
+                    'phone' => $data['customer_phone'],
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'business_id' => $businessId,
+                    'role' => 'customer',
+                    'is_active' => true,
+                ]);
+
+                $appointment->customer_id = $user->id;
+                $appointment->guest_token = null;
+                $appointment->save();
+            }
+
             return $appointment;
         });
+
+        if (!Auth::check() && $request->boolean('create_account')) {
+            $newUser = User::where('phone', $data['customer_phone'])->first();
+            if ($newUser) {
+                Auth::login($newUser);
+            }
+        }
 
         $token = $appointment->guest_token;
 

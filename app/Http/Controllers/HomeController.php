@@ -6,6 +6,7 @@ use App\Models\Business;
 use App\Models\Service;
 use App\Models\Package;
 use App\Models\Appointment;
+use App\Models\Rating;
 use App\Mail\ContactFormMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -26,7 +27,28 @@ class HomeController extends Controller
                 ->first();
         }
 
-        return view('home', compact('upcomingAppointment'));
+        $business = Business::where('is_active', true)->first();
+
+        $services = $business
+            ? Service::where('business_id', $business->id)->where('is_active', true)->orderBy('sort_order')->take(6)->get()
+            : collect();
+
+        $packages = $business
+            ? Package::where('business_id', $business->id)->where('is_active', true)->with('services')->orderBy('sort_order')->take(3)->get()
+            : collect();
+
+        $testimonials = Rating::where('rating', '>=', 4)
+            ->whereNotNull('comment')
+            ->whereHas('appointment', function ($q) {
+                $q->where('status', Appointment::STATUS_COMPLETED);
+            })
+            ->with(['customer', 'appointment.services'])
+            ->orderByDesc('rating')
+            ->take(3)
+            ->get()
+            ->shuffle();
+
+        return view('home', compact('upcomingAppointment', 'services', 'packages', 'testimonials'));
     }
 
     /**

@@ -116,62 +116,104 @@
         </div>
     </div>
 
-    {{-- 3. Registration benefits section (highlighted) --}}
-    @guest
-    <div class="mt-16 py-16 px-8 bg-gradient-to-br from-rose-500 via-rose-600 to-amber-700 rounded-[2.5rem] text-center text-white shadow-xl shadow-rose-200/50">
-        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white/90 px-5 py-2 rounded-full text-sm font-medium mb-4 border border-white/20">
-            ✨ {{ __('Exclusive Benefits') }}
-        </div>
-        <h2 class="text-3xl font-bold mb-3">{{ __('Why Register?') }}</h2>
-        <p class="text-rose-100 text-lg mb-12">{{ __("Create your account and enjoy exclusive benefits") }}</p>
-
-        <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">{{ __('Your Previous Bookings') }}</h3>
-                <p class="text-rose-100 text-sm leading-relaxed">{{ __("See all your bookings in one place without needing a ticket number") }}</p>
+    {{-- 3. Top Services --}}
+    @if($services->isNotEmpty())
+    <div class="mt-16">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 bg-rose-100/60 text-rose-700 px-5 py-2 rounded-full text-sm font-medium mb-4">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                {{ __('خدماتنا') }}
             </div>
-
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">{{ __('Repeat Booking with One Click') }}</h3>
-                <p class="text-rose-100 text-sm leading-relaxed">{{ __("Want to book the same service again? Repeat your previous booking with one click") }}</p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">{{ __('Rate Services') }}</h3>
-                    <p class="text-rose-100 text-sm leading-relaxed">{{ __("After the service, rate your experience and help others choose") }}</p>
-            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">{{ __('الخدمات الأكثر طلباً') }}</h2>
+            <p class="text-gray-500 max-w-xl mx-auto">{{ __('تصفحي أشهر خدماتنا واحجزي موعدك') }}</p>
         </div>
 
-        <div class="mt-12">
-            <p class="text-rose-100 mb-8 text-lg">{{ __('Start Now') }}:</p>
-            <div class="flex justify-center gap-4 flex-wrap">
-                <a href="{{ route('register') }}"
-                   class="bg-white text-rose-600 px-10 py-4 rounded-xl text-lg font-bold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200">
-                    {{ __('Create New Account') }}
-                </a>
-                <a href="{{ route('login') }}"
-                   class="bg-rose-400 text-white border-2 border-white/30 px-8 py-4 rounded-xl text-lg font-bold hover:bg-rose-300 hover:-translate-y-0.5 transition-all duration-200">
-                    {{ __("I have an account — Login") }}
-                </a>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($services as $service)
+            @php
+                $emojiMap = ['شعر'=>'💇‍♀️','مكياج'=>'💄','مساج'=>'💆‍♀️','أظافر'=>'💅','بشرة'=>'✨','عناية'=>'✨','أخرى'=>'💫'];
+            @endphp
+            <div class="group bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 hover:border-rose-200 transition-all duration-300 hover:-translate-y-1 p-8 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-rose-100 to-amber-100 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:from-rose-200 group-hover:to-amber-200 transition-all duration-300 shadow-sm">
+                    <span class="text-3xl">{{ $emojiMap[$service->category] ?? '💫' }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $service->name }}</h3>
+                @if($service->description)
+                <p class="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-2">{{ $service->description }}</p>
+                @endif
+                <div class="mt-auto w-full">
+                    <div class="flex justify-center items-baseline gap-1.5 mb-5">
+                        <span class="text-3xl font-extrabold text-rose-600">{{ formatCurrency($service->price) }}</span>
+                    </div>
+                    <a href="{{ route('book', ['service_id' => $service->id]) }}"
+                       class="block w-full bg-gradient-to-l from-rose-500 to-rose-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-rose-200/60 hover:shadow-xl hover:from-rose-600 hover:to-rose-700 hover:-translate-y-0.5 transition-all duration-200 text-[15px]">
+                        {{ __('Book Now') }}
+                    </a>
+                </div>
             </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="{{ route('services') }}"
+               class="inline-flex items-center gap-2 text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200">
+                {{ __('عرض الكل') }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </div>
-    @endguest
+    @endif
+
+    {{-- 4. Featured Packages --}}
+    @if($packages->isNotEmpty())
+    <div class="mt-16">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 bg-amber-100/60 text-amber-700 px-5 py-2 rounded-full text-sm font-medium mb-4">
+                🎁 {{ __('عروضنا') }}
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">{{ __('باقاتنا الحصرية') }}</h2>
+            <p class="text-gray-500 max-w-xl mx-auto">{{ __('عروض حصرية وباقات مخصصة لأجلك') }}</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($packages as $package)
+            @php
+                $discount = $package->original_price && $package->original_price > $package->price
+                    ? round((1 - $package->price / $package->original_price) * 100)
+                    : 0;
+                $icons = ['💇‍♀️', '💄', '✨', '💅', '💆‍♀️', '🧴', '🎀', '💫'];
+                $bgColors = ['from-rose-50 to-amber-50', 'from-purple-50 to-pink-50', 'from-teal-50 to-emerald-50', 'from-blue-50 to-indigo-50'];
+            @endphp
+            <div class="bg-gradient-to-br {{ $bgColors[$loop->index % count($bgColors)] }} border-2 border-rose-200/60 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                @if($discount > 0)
+                <div class="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">{{ __('Discount') }} {{ $discount }}%</div>
+                @endif
+                <div class="text-4xl mb-4 mt-4">{{ $icons[$loop->index % count($icons)] }}</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $package->name }}</h3>
+                <p class="text-gray-500 text-sm mb-4">{{ $package->description ?: $package->services->pluck('name')->implode(' + ') }}</p>
+                <div class="flex justify-center items-baseline gap-3 mb-5">
+                    @if($package->original_price && $package->original_price > $package->price)
+                    <span class="text-lg text-gray-400 line-through">{{ formatCurrency($package->original_price) }}</span>
+                    @endif
+                    <span class="text-3xl font-extrabold text-rose-600">{{ formatCurrency($package->price) }}</span>
+                </div>
+                <a href="{{ route('book', ['package_ids[]' => $package->id]) }}"
+                   class="block w-full bg-gradient-to-l from-rose-500 to-rose-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-rose-200/60 hover:shadow-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200">
+                    {{ __('Book Package') }}
+                </a>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="{{ route('services') }}"
+               class="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium transition-colors duration-200">
+                {{ __('عرض الكل') }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+    @endif
 
     {{-- 5. How It Works --}}
     <div class="mt-16 mb-16">
@@ -267,6 +309,46 @@
             </a>
         </div>
     </div>
+
+    {{-- 7. Testimonials --}}
+    @if($testimonials->isNotEmpty())
+    <div class="mt-16 mb-16">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 bg-rose-100/60 text-rose-700 px-5 py-2 rounded-full text-sm font-medium mb-4">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                {{ __('آراء العميلات') }}
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">{{ __('آراء عميلاتنا') }}</h2>
+            <p class="text-gray-500 max-w-xl mx-auto">{{ __('ما قالته عميلاتنا عن تجربتهن في رونق النجوم') }}</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($testimonials as $rating)
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
+                <div class="flex gap-0.5 mb-3">
+                    @for($i = 1; $i <= 5; $i++)
+                    <svg class="w-5 h-5 {{ $i <= $rating->rating ? 'text-yellow-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    @endfor
+                </div>
+                @if($rating->comment)
+                <p class="text-gray-600 text-sm leading-relaxed mb-4 italic">"{{ $rating->comment }}"</p>
+                @endif
+                <div class="mt-auto flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <div class="w-8 h-8 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center text-sm font-bold text-rose-600 shrink-0">
+                        {{ substr($rating->customer?->name ?? 'G', 0, 1) }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-800">{{ $rating->customer?->name ?? __('Guest') }}</p>
+                        @if($rating->appointment?->display_services)
+                        <p class="text-xs text-gray-400">{{ $rating->appointment->display_services }}</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
 </div>
 @endsection

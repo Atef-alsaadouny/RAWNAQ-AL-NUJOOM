@@ -139,7 +139,7 @@ Route::get('/locale/{locale}', function ($locale) {
     if (in_array($locale, config('app.supported_locales'))) {
         session(['locale' => $locale]);
     }
-    return redirect()->route('home');
+    return redirect()->back();
 })->name('locale.switch');
 
 
