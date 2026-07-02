@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Ensure storage framework directories exist (fixes "Please provide a valid cache path")
+mkdir -p /var/www/html/storage/framework/cache/data
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/framework/testing
+
 if [ ! -f /var/www/html/.env ]; then
     echo "Creating .env from .env.example..."
     cp /var/www/html/.env.example /var/www/html/.env
