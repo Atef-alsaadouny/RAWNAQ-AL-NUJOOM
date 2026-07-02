@@ -16,11 +16,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
-use App\Mail\BookingConfirmation;
 
 class BookingController extends Controller
 {
@@ -206,18 +204,6 @@ class BookingController extends Controller
 
             return $appointment;
         });
-
-        $email = Auth::check() ? Auth::user()->email : null;
-        if ($email) {
-            try {
-                Mail::to($email)->send(new BookingConfirmation($appointment));
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::warning('Booking confirmation email failed', [
-                    'appointment_id' => $appointment->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
 
         $token = $appointment->guest_token;
 
