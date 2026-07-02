@@ -64,6 +64,8 @@ class EmployeeController extends Controller
      */
     public function dashboard(): View
     {
+        Appointment::expirePast();
+
         $employeeId = Auth::id();
         $today = now()->toDateString();
 
@@ -110,6 +112,8 @@ class EmployeeController extends Controller
      */
     public function appointments(Request $request): View
     {
+        Appointment::expirePast();
+
         $employeeId = Auth::id();
         
         $query = Appointment::forEmployee($employeeId)

@@ -33,6 +33,8 @@ class User extends Authenticatable
         'phone',
         'last_login_at',
         'business_id',
+        'role',
+        'is_active',
     ];
 
     /**

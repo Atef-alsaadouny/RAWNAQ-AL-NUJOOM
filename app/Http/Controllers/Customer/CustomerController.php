@@ -18,6 +18,8 @@ class CustomerController extends Controller
 {
     public function appointments(): View
     {
+        Appointment::expirePast();
+
         $appointments = Appointment::where('customer_id', Auth::id())
             ->with(['services', 'employee', 'rating'])
             ->orderBy('appointment_date')
@@ -29,6 +31,8 @@ class CustomerController extends Controller
 
     public function show(Appointment $appointment): View
     {
+        Appointment::expirePast();
+
         if ($appointment->customer_id !== Auth::id()) {
             abort(403);
         }
@@ -38,6 +42,8 @@ class CustomerController extends Controller
 
     public function profile(): View
     {
+        Appointment::expirePast();
+
         $user = auth()->user();
 
         $totalBookings = Appointment::where('customer_id', $user->id)->count();

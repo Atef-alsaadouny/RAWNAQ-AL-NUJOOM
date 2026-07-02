@@ -36,8 +36,21 @@ class RatingController extends Controller
             ->with('success', __('Your rating has been submitted, thank you!'));
     }
 
+    protected function getBusinessId(): int
+    {
+        $business = \App\Models\Business::where('is_active', true)->first();
+        if (!$business) {
+            abort(404, 'No active business found.');
+        }
+        return $business->id;
+    }
+
     public function guestStore(Request $request, Appointment $appointment): RedirectResponse
     {
+        if ($appointment->business_id !== $this->getBusinessId()) {
+            abort(403);
+        }
+
         if ($appointment->status !== Appointment::STATUS_COMPLETED) {
             return back()->with('error', __('Cannot rate a booking that is not completed'));
         }

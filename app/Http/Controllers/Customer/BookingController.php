@@ -346,6 +346,10 @@ class BookingController extends Controller
 
     public function guestEdit(Request $request, Appointment $appointment): RedirectResponse|View
     {
+        if ($appointment->business_id !== $this->getBusinessId()) {
+            abort(403);
+        }
+
         session()->forget('success');
 
         if (!in_array($appointment->status, Appointment::EDITABLE_STATUSES)) {
@@ -481,11 +485,15 @@ class BookingController extends Controller
         ]);
 
         return redirect()->route($redirectRoute)
-            ->with('error', __('Booking cancelled'));
+            ->with('success', __('Booking cancelled'));
     }
 
     public function guestCancel(Request $request, Appointment $appointment): RedirectResponse
     {
+        if ($appointment->business_id !== $this->getBusinessId()) {
+            abort(403);
+        }
+
         if ($request->phone !== $appointment->customer_phone) {
             return back()->with('error', __('No booking found with this ticket and phone'));
         }

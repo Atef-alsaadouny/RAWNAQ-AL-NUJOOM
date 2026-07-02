@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Appointment extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const STATUS_PENDING = 'pending';
     const STATUS_ASSIGNED = 'assigned';
@@ -15,6 +17,8 @@ class Appointment extends Model
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELLED = 'cancelled';
     const STATUS_EXPIRED = 'expired';
+    const STATUS_ARRIVED = 'arrived';
+    const STATUS_NO_SHOW = 'no_show';
 
     const PRIORITY_NORMAL = 'normal';
     const PRIORITY_URGENT = 'urgent';
@@ -30,27 +34,9 @@ class Appointment extends Model
     const MAX_PAGE_SIZE = 20;
 
     const EDITABLE_STATUSES = ['pending', 'assigned'];
-    const ACTIVE_STATUSES = ['pending', 'assigned', 'in_progress'];
-    /**
-     * الحقول القابلة للتعبئة (المسموح بإدخالها عبر المستخدم)
-     * ticket_number: رقم التذكرة (يتم إنشاؤه تلقائياً)
-     * business_id: معرف الشركة/الصالون
-     * customer_id: معرف العميل
-     * employee_id: معرف الموظف
-     * service_id: معرف الخدمة
-     * shift: الفترة (صباحية/مسائية)
-     * appointment_date: تاريخ الموعد
-     * assigned_time: الوقت المحدد للموعد
-     * status: الحالة (pending, confirmed, completed, cancelled)
-     * priority: الأولوية
-     * assigned_by: معرف من قام بتعيين الموعد
-     * customer_name: اسم العميل (لغير المسجلين)
-     * customer_phone: هاتف العميل (لغير المسجلين)
-     * notes: ملاحظات إضافية
-     * completed_at: تاريخ الإنجاز الفعلي
-     */
+    const ACTIVE_STATUSES = ['pending', 'assigned', 'in_progress', 'arrived'];
+
     protected $fillable = [
-        'ticket_number',
         'business_id',
         'customer_id',
         'employee_id',
@@ -66,130 +52,130 @@ class Appointment extends Model
         'notes',
         'cancel_reason',
         'completed_at',
+        'total_price',
+        'payment_status',
     ];
 
-    /**
-     * تحويل أنواع الحقول تلقائياً
-     * appointment_date: تاريخ (date) بدون وقت
-     * assigned_time: وقت بصيغة H:i (ساعة:دقيقة)
-     * completed_at: DateTime كامل
-     */
     protected function casts(): array
     {
         return [
             'appointment_date' => 'date:Y-m-d',
             'assigned_time' => 'string',
             'completed_at' => 'datetime',
+            'deleted_at' => 'datetime',
+            'total_price' => 'decimal:3',
+            'payment_status' => 'string',
         ];
     }
 
-    /**
-     * العلاقة مع جدول الأعمال - الموعد يخص شركة/صالون معين
-     */
+    private static bool $alreadyExpired = false;
+
+    public static function expirePast(): void
+    {
+        if (self::$alreadyExpired) {
+            return;
+        }
+        self::$alreadyExpired = true;
+
+        $expired = static::whereDate('appointment_date', '<', now())
+            ->whereIn('status', self::EDITABLE_STATUSES)
+            ->get();
+
+        if ($expired->isEmpty()) {
+            return;
+        }
+
+        $expiredIds = $expired->pluck('id');
+
+        static::whereIn('id', $expiredIds)->update(['employee_id' => null]);
+
+        DB::table('appointment_employee')->whereIn('appointment_id', $expiredIds)->delete();
+
+        $logs = [];
+        foreach ($expired as $apt) {
+            $logs[] = [
+                'appointment_id' => $apt->id,
+                'old_status' => $apt->status,
+                'new_status' => self::STATUS_CANCELLED,
+                'notes' => 'Auto-cancelled — appointment expired',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        static::whereIn('id', $expiredIds)->update([
+            'status' => self::STATUS_CANCELLED,
+            'cancel_reason' => 'Appointment expired',
+        ]);
+
+        \App\Models\AppointmentLog::insert($logs);
+    }
+
     public function business(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    /**
-     * العلاقة مع جدول المستخدمين - العميل صاحب الموعد
-     */
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    /**
-     * العلاقة مع جدول المستخدمين - الموظف المخصص للموعد (للحجوزات ذات الموظف الواحد)
-     */
     public function employee(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'employee_id');
     }
 
-    /**
-     * العلاقة مع الموظفين المتعددين عبر جدول وسيط
-     */
     public function employees(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'appointment_employee', 'appointment_id', 'employee_id')->withTimestamps();
     }
 
-    /**
-     * العلاقة مع جدول الخدمات عبر جدول وسيط - الموعد يمكن أن يحتوي على خدمات متعددة
-     */
     public function services(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withTimestamps();
     }
 
-    /**
-     * العلاقة مع الباقة — إذا كان الموعد عبر باقة
-     */
     public function package(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Package::class);
     }
 
-    /**
-     * العلاقة مع الباقات المتعددة عبر جدول وسيط
-     */
     public function packages(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Package::class, 'appointment_package');
     }
 
-    /**
-     * العلاقة مع جدول المستخدمين - من قام بتعيين هذا الموعد
-     */
     public function assignedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
     }
 
-    /**
-     * العلاقة مع جدول التقييمات - التقييم الخاص بهذا الموعد
-     */
     public function rating(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Rating::class);
     }
 
-    /**
-     * العلاقة مع الدفع — لكل حجز عملية دفع واحدة
-     */
     public function payment(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Payment::class);
     }
 
-    /**
-     * العلاقة مع جدول سجل المواعيد - جميع التغييرات التي طرأت على هذا الموعد
-     */
     public function logs(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(AppointmentLog::class);
     }
 
-    /**
-     * نطاق (scope) لفلترة المواعيد المعلقة (قيد الانتظار)
-     */
     public function scopePending($query): void
     {
         $query->where('status', self::STATUS_PENDING);
     }
 
-    /**
-     * نطاق (scope) لفلترة المواعيد الخاصة بشركة/صالون معين
-     */
     public function scopeForBusiness($query, $businessId): void
     {
         $query->where('business_id', $businessId);
     }
 
-    /**
-     * نطاق (scope) لفلترة المواعيد الخاصة بموظف معين (FK أو pivot)
-     */
     public function scopeForEmployee($query, $employeeId): void
     {
         $query->where(function ($q) use ($employeeId) {
@@ -198,10 +184,6 @@ class Appointment extends Model
         });
     }
 
-    /**
-     * الحصول على أسماء الخدمات كسلسلة نصية (مثلاً: "قص شعر + صبغ")
-     * إذا ما في خدمات فردية، يعرض خدمات الباقات
-     */
     public function getServiceNamesAttribute()
     {
         $serviceNames = $this->services->pluck('name');
@@ -238,9 +220,6 @@ class Appointment extends Model
         return $names->isNotEmpty() ? $names->implode(' + ') : null;
     }
 
-    /**
-     * حساب السعر الإجمالي للحجز (مجموع الخدمات + الباقات)
-     */
     public function getTotalPriceAttribute()
     {
         $packageServiceIds = collect();
@@ -261,25 +240,16 @@ class Appointment extends Model
         return $servicesTotal + $packagesTotal;
     }
 
-    /**
-     * هل الحجز مدفوع (non-cash)?
-     */
     public function isPaid(): bool
     {
         return $this->payment && $this->payment->isPaid();
     }
 
-    /**
-     * هل يمكن تعديل/إلغاء الحجز? (نعم فقط إذا طريقة الدفع كاش)
-     */
     public function isEditable(): bool
     {
         return $this->payment && $this->payment->isCash();
     }
 
-    /**
-     * حساب الأولوية التلقائية بناءً على السعر الإجمالي أو عدد الحجوزات السابقة
-     */
     public function getAutoPriorityAttribute()
     {
         if ($this->total_price >= self::VIP_PRICE_THRESHOLD) {
@@ -299,18 +269,11 @@ class Appointment extends Model
         return $this->priority;
     }
 
-    /**
-     * نطاق للحجوزات النشطة (غير المنتهية)
-     */
     public function scopeActiveBookings($query): void
     {
         $query->whereIn('status', self::ACTIVE_STATUSES);
     }
 
-    /**
-     * إنشاء رقم تذكرة فريد للموعد
-     * الصيغة: XXXXX (رقم تسلسلي نظيف)
-     */
     public static function generateTicketNumber($businessId)
     {
         $max = static::where('business_id', $businessId)

@@ -182,27 +182,4 @@ class TapPaymentService
     public function isLive(): bool
     {
         return $this->mode === 'live';
-    }
-
-    /**
-     * استخدام sandbox charge ID للتجربة بدون Tap حقيقي
-     */
-    public function simulateCharge(Appointment $appointment, string $method): array
-    {
-        $params = [
-            'appointment' => $appointment->id,
-            'status' => 'success',
-            'charge_id' => 'chg_sandbox_' . uniqid(),
-        ];
-        if ($appointment->guest_token) {
-            $params['token'] = $appointment->guest_token;
-        }
-
-        return [
-            'success' => true,
-            'charge_id' => 'chg_sandbox_' . uniqid(),
-            'transaction_id' => 'TXN' . $appointment->ticket_number,
-            'redirect_url' => route('payment.callback', $params),
-        ];
-    }
-}
+    }}

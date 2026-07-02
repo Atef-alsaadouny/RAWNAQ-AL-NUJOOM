@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return back()->withErrors(['login' => 'بيانات الدخول هذي مو صحيحة']);
+            return back()->withErrors(['login' => __('This account is disabled. Please contact support.')]);
         }
 
         RateLimiter::clear(Str::transliterate(Str::lower($request->input('login')) . '|' . $request->ip()));

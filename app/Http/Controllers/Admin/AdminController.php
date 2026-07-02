@@ -21,8 +21,8 @@ class AdminController extends Controller
             'unassigned' => Appointment::forBusiness($businessId)->where('status', Appointment::STATUS_PENDING)->whereNull('employee_id')->count(),
             'total_employees' => User::forBusiness($businessId)->employees()->count(),
             'total_services' => Service::forBusiness($businessId)->count(),
-            'total_ratings' => Rating::whereIn('appointment_id', Appointment::forBusiness($businessId)->pluck('id'))->count(),
-            'avg_rating' => Rating::whereIn('appointment_id', Appointment::forBusiness($businessId)->pluck('id'))->avg('rating') ?? 0,
+            'total_ratings' => Rating::whereHas('appointment', fn($q) => $q->forBusiness($businessId))->count(),
+            'avg_rating' => Rating::whereHas('appointment', fn($q) => $q->forBusiness($businessId))->avg('rating') ?? 0,
         ];
     }
 
@@ -44,6 +44,8 @@ class AdminController extends Controller
      */
     public function dashboard(Request $request)
     {
+        Appointment::expirePast();
+
         $businessId = Auth::user()->business_id;
         $today = now()->toDateString();
 
@@ -109,6 +111,8 @@ class AdminController extends Controller
      */
     public function dashboardData()
     {
+        Appointment::expirePast();
+
         $businessId = Auth::user()->business_id;
         $today = now()->toDateString();
 

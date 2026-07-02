@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\User;
-use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,16 +45,13 @@ class ReportController extends Controller
 
         $employeeStats = User::where('business_id', $businessId)
             ->where('role', 'employee')
-            ->withCount(['assignedAppointments'])
+            ->withCount([
+                'assignedAppointments',
+                'assignedAppointments as completed_count' => fn($q) => $q->where('status', Appointment::STATUS_COMPLETED),
+            ])
             ->get()
-            ->map(function ($emp) use ($businessId) {
-                $emp->completed_count = Appointment::forEmployee($emp->id)
-                    ->where('appointments.business_id', $businessId)
-                    ->where('status', Appointment::STATUS_COMPLETED)
-                    ->count();
-                $emp->avg_rating = Rating::where('employee_id', $emp->id)
-                    ->whereIn('appointment_id', Appointment::forBusiness($businessId)->pluck('id'))
-                    ->avg('rating') ?? 0;
+            ->map(function ($emp) {
+                $emp->avg_rating = $emp->ratings()->avg('rating') ?? 0;
                 return $emp;
             });
 

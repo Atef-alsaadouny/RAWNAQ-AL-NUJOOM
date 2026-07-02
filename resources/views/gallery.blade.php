@@ -60,14 +60,16 @@
 <div id="imageModal" class="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4" onclick="closeModal(event)">
     <div class="relative max-w-3xl w-full" onclick="event.stopPropagation()">
         <button onclick="closeModal()" class="absolute -top-12 right-0 text-white/70 hover:text-white text-sm font-bold transition-colors">{{ __('Close') }} ✕</button>
-        <img id="modalImage" src="" alt="" class="w-full rounded-2xl shadow-2xl max-h-[80vh] object-cover">
+        <img id="modalImage" src="" alt="Gallery image" class="w-full rounded-2xl shadow-2xl max-h-[80vh] object-cover">
         <p id="modalCaption" class="text-white/80 text-center mt-4 text-sm font-medium"></p>
     </div>
 </div>
 
 <script>
 function openModal(src, title) {
-    document.getElementById('modalImage').src = src;
+    const img = document.getElementById('modalImage');
+    img.src = src;
+    img.alt = title ? 'Gallery: ' + title : 'Gallery image';
     document.getElementById('modalCaption').textContent = title;
     const modal = document.getElementById('imageModal');
     modal.classList.remove('hidden');

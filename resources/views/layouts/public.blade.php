@@ -68,6 +68,9 @@
             'sameAs' => ['https://www.instagram.com/rawnaqalnujoom'],
         ];
     @endphp
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "9ac9b6b132114b2998a4df171b0e1e2d"}'></script>
+    <!-- End Cloudflare Web Analytics -->
     <script type="application/ld+json">
     @json($ld, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     </script>

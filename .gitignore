@@ -3,8 +3,11 @@
 .env
 .env.backup
 .env.production
+.env.docker
 .phpactor.json
 .phpunit.result.cache
+.composer.phar
+.phplint-cache
 /.fleet
 /.idea
 /.nova
@@ -18,8 +21,11 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/framework/cache/data/*
+/storage/framework/views/*.php
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
 /backups
+composer.phar

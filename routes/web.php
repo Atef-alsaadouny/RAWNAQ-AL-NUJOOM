@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Customer\PaymentController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -56,12 +58,12 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer
     Route::get('/appointments', [CustomerController::class, 'appointments'])->name('appointments');
     Route::get('/appointments/{appointment}', [CustomerController::class, 'show'])->name('appointment.show');
     Route::get('/appointments/{appointment}/edit', [BookingController::class, 'edit'])->name('appointment.edit');
-    Route::put('/appointments/{appointment}', [BookingController::class, 'update'])->name('appointment.update')->middleware('throttle:10,1');
-    Route::delete('/appointments/{appointment}/cancel', [BookingController::class, 'customerCancel'])->name('appointment.cancel')->middleware('throttle:5,1');
-    Route::post('/ratings/{appointment}', [RatingController::class, 'store'])->name('rating.store')->middleware('throttle:10,1');
+    Route::put('/appointments/{appointment}', [BookingController::class, 'update'])->name('appointment.update');
+    Route::delete('/appointments/{appointment}/cancel', [BookingController::class, 'customerCancel'])->name('appointment.cancel');
+    Route::post('/ratings/{appointment}', [RatingController::class, 'store'])->name('rating.store');
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile');
-    Route::put('/profile', [CustomerController::class, 'updateProfile'])->name('profile.update')->middleware('throttle:5,1');
-    Route::put('/profile/password', [CustomerController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:5,1');
+    Route::put('/profile', [CustomerController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/password', [CustomerController::class, 'updatePassword'])->name('profile.password');
 });
 
 // Employee Routes
@@ -69,10 +71,10 @@ Route::prefix('employee')->name('employee.')->middleware(['auth', 'role:employee
     Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/today', [EmployeeController::class, 'todayAppointments'])->name('dashboard.today');
     Route::get('/available', [EmployeeController::class, 'available'])->name('available');
-    Route::patch('/appointments/{appointment}/claim', [EmployeeController::class, 'claim'])->name('appointment.claim')->middleware('throttle:30,1');
+    Route::patch('/appointments/{appointment}/claim', [EmployeeController::class, 'claim'])->name('appointment.claim');
     Route::get('/appointments', [EmployeeController::class, 'appointments'])->name('appointments');
     Route::get('/appointments/{appointment}', [EmployeeController::class, 'show'])->name('appointment.show');
-    Route::patch('/appointments/{appointment}/status', [EmployeeController::class, 'updateStatus'])->name('appointment.status')->middleware('throttle:60,1');
+    Route::patch('/appointments/{appointment}/status', [EmployeeController::class, 'updateStatus'])->name('appointment.status');
     Route::get('/ratings', [EmployeeController::class, 'ratings'])->name('ratings');
     Route::get('/notifications/recent', [EmployeeController::class, 'recentNotifications'])->name('notifications.recent');
 });
@@ -80,7 +82,7 @@ Route::prefix('employee')->name('employee.')->middleware(['auth', 'role:employee
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,owner', 'throttle:200,1'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('dashboard.data')->middleware('throttle:30,1');
+    Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('dashboard.data');
     Route::resource('customers', AdminCustomerController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::resource('employees', AdminEmployeeController::class);
     Route::get('/employees/{employee}/performance', [AdminEmployeeController::class, 'performance'])->name('employees.performance');
@@ -88,19 +90,46 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,owner', 
     Route::resource('packages', PackageController::class);
     Route::resource('appointments', AppointmentController::class);
     Route::get('/appointments/{appointment}/assign', [AppointmentController::class, 'assignForm'])->name('appointments.assign');
-    Route::post('/appointments/{appointment}/assign', [AppointmentController::class, 'assign'])->name('appointments.assign.store')->middleware('throttle:30,1');
-    Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel')->middleware('throttle:30,1');
+    Route::post('/appointments/{appointment}/assign', [AppointmentController::class, 'assign'])->name('appointments.assign.store');
+    Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::get('/appointments/{appointment}/rebook', [AppointmentController::class, 'rebook'])->name('appointments.rebook');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
-    Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store')->middleware('throttle:30,1');
-    Route::delete('/schedule/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy')->middleware('throttle:30,1');
+    Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::delete('/schedule/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::get('/notifications/recent-bookings', [AdminController::class, 'recentBookings'])->name('notifications.recent');
 });
 
 // Auth Routes
 require __DIR__.'/auth.php';
+
+// Health Check (UptimeRobot pings every 5 min)
+Route::get('/health-check', function () {
+    try {
+        DB::connection()->getPdo();
+
+        $expireStatus = 'skipped';
+        $lastRun = Cache::store('database')->get('health_check_expire_last_run');
+
+        if (!$lastRun || now()->diffInMinutes($lastRun) >= 30) {
+            App\Models\Appointment::expirePast();
+            Cache::store('database')->put('health_check_expire_last_run', now(), 60);
+            $expireStatus = 'executed';
+        }
+
+        return response()->json([
+            'status' => 'healthy',
+            'database' => 'connected',
+            'expire_check' => $expireStatus,
+        ], 200);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'unhealthy',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
 
 // Sitemap
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');

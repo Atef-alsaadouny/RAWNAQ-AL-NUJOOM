@@ -64,7 +64,7 @@ class EmployeeController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-        $nextId = $lastEmployee ? (intval(substr($lastEmployee->employee_id, -3)) + 1) : 1;
+        $nextId = $lastEmployee ? (intval(substr($lastEmployee->employee_id, 4)) + 1) : 1;
         $employeeId = 'EMP-' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
 
         // إنشاء الموظف الجديد مع تشفير كلمة المرور

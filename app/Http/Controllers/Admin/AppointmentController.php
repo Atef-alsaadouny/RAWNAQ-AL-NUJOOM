@@ -14,6 +14,7 @@ use App\Models\AppointmentLog;
 use App\Services\AppointmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class AppointmentController extends Controller
@@ -30,6 +31,8 @@ class AppointmentController extends Controller
      */
     public function index(Request $request)
     {
+        Appointment::expirePast();
+
         $businessId = Auth::user()->business_id;
 
         // بدء استعلام الحجوزات مع تحميل العلاقات المرتبطة (العميل، الموظف، الخدمة)
@@ -88,30 +91,34 @@ class AppointmentController extends Controller
 
         $validated = $request->validated();
 
-        $appointment = Appointment::create([
-            'business_id' => $businessId,
-            'customer_name' => $validated['customer_name'],
-            'customer_phone' => $validated['customer_phone'],
-            'employee_id' => $validated['employee_id'],
-            'shift' => $validated['shift'],
-            'appointment_date' => $validated['appointment_date'],
-            'priority' => $validated['priority'],
-            'notes' => $validated['notes'],
-            'status' => $validated['status'] ?? Appointment::STATUS_PENDING,
-            'ticket_number' => Appointment::generateTicketNumber($businessId),
-        ]);
+        $appointment = DB::transaction(function () use ($businessId, $validated, $request) {
+            $appointment = Appointment::create([
+                'business_id' => $businessId,
+                'customer_name' => $validated['customer_name'],
+                'customer_phone' => $validated['customer_phone'],
+                'employee_id' => $validated['employee_id'],
+                'shift' => $validated['shift'],
+                'appointment_date' => $validated['appointment_date'],
+                'priority' => $validated['priority'],
+                'notes' => $validated['notes'],
+                'status' => $validated['status'] ?? Appointment::STATUS_PENDING,
+                'ticket_number' => Appointment::generateTicketNumber($businessId),
+            ]);
 
-        if ($request->has('employee_ids') || $request->has('employee_id')) {
-            $employeeIds = $request->filled('employee_ids') ? (array)$request->employee_ids : ($request->filled('employee_id') ? [$request->employee_id] : []);
-            if (!empty($employeeIds)) {
-                $appointment->employee_id = $employeeIds[0];
-                $appointment->save();
-                $appointment->employees()->sync($employeeIds);
+            if ($request->has('employee_ids') || $request->has('employee_id')) {
+                $employeeIds = $request->filled('employee_ids') ? (array)$request->employee_ids : ($request->filled('employee_id') ? [$request->employee_id] : []);
+                if (!empty($employeeIds)) {
+                    $appointment->employee_id = $employeeIds[0];
+                    $appointment->save();
+                    $appointment->employees()->sync($employeeIds);
+                }
             }
-        }
 
-        $this->appointmentService->syncServicesAndPackages($appointment, $request, true);
-        $this->appointmentService->applyAutoPriority($appointment);
+            $this->appointmentService->syncServicesAndPackages($appointment, $request, true);
+            $this->appointmentService->applyAutoPriority($appointment);
+
+            return $appointment;
+        });
 
         return redirect()->route('admin.appointments.index')
             ->with('success', __('Booking created'));
@@ -143,40 +150,42 @@ class AppointmentController extends Controller
 
         $validated = $request->validated();
 
-        $oldStatus = $appointment->status;
+        DB::transaction(function () use ($appointment, $validated, $request) {
+            $oldStatus = $appointment->status;
 
-        $appointment->update([
-            'customer_name' => $validated['customer_name'],
-            'customer_phone' => $validated['customer_phone'],
-            'employee_id' => $validated['employee_id'],
-            'shift' => $validated['shift'],
-            'appointment_date' => $validated['appointment_date'],
-            'assigned_time' => $validated['assigned_time'] ?? null,
-            'priority' => $validated['priority'],
-            'notes' => $validated['notes'],
-            'status' => $validated['status'],
-        ]);
-
-        if ($request->has('employee_ids') || $request->has('employee_id')) {
-            $employeeIds = $request->filled('employee_ids') ? (array)$request->employee_ids : ($request->filled('employee_id') ? [$request->employee_id] : []);
-            if (!empty($employeeIds)) {
-                $appointment->employee_id = $employeeIds[0];
-                $appointment->save();
-                $appointment->employees()->sync($employeeIds);
-            }
-        }
-
-        $this->appointmentService->syncServicesAndPackages($appointment, $request, true);
-        $this->appointmentService->applyAutoPriority($appointment);
-
-        if ($oldStatus !== $validated['status']) {
-            AppointmentLog::create([
-                'appointment_id' => $appointment->id,
-                'action_by' => Auth::id(),
-                'old_status' => $oldStatus,
-                'new_status' => $validated['status'],
+            $appointment->update([
+                'customer_name' => $validated['customer_name'],
+                'customer_phone' => $validated['customer_phone'],
+                'employee_id' => $validated['employee_id'],
+                'shift' => $validated['shift'],
+                'appointment_date' => $validated['appointment_date'],
+                'assigned_time' => $validated['assigned_time'] ?? null,
+                'priority' => $validated['priority'],
+                'notes' => $validated['notes'],
+                'status' => $validated['status'],
             ]);
-        }
+
+            if ($request->has('employee_ids') || $request->has('employee_id')) {
+                $employeeIds = $request->filled('employee_ids') ? (array)$request->employee_ids : ($request->filled('employee_id') ? [$request->employee_id] : []);
+                if (!empty($employeeIds)) {
+                    $appointment->employee_id = $employeeIds[0];
+                    $appointment->save();
+                    $appointment->employees()->sync($employeeIds);
+                }
+            }
+
+            $this->appointmentService->syncServicesAndPackages($appointment, $request, true);
+            $this->appointmentService->applyAutoPriority($appointment);
+
+            if ($oldStatus !== $validated['status']) {
+                AppointmentLog::create([
+                    'appointment_id' => $appointment->id,
+                    'action_by' => Auth::id(),
+                    'old_status' => $oldStatus,
+                    'new_status' => $validated['status'],
+                ]);
+            }
+        });
 
         return redirect()->route('admin.appointments.show', $appointment)
             ->with('success', __('Booking updated.'));
@@ -209,36 +218,38 @@ class AppointmentController extends Controller
             'assigned_time' => 'nullable|date_format:H:i',
         ]);
 
-        $employeeId = $request->employee_id;
+        DB::transaction(function () use ($appointment, $request) {
+            $employeeId = $request->employee_id;
 
-        if (empty($employeeId)) {
-            $employees = User::where('business_id', Auth::user()->business_id)
-                ->where('role', 'employee')
-                ->where('is_active', true)
-                ->get();
-            $employeeId = $employees->isEmpty() ? null : $employees->random()->id;
-        }
+            if (empty($employeeId)) {
+                $employees = User::where('business_id', Auth::user()->business_id)
+                    ->where('role', 'employee')
+                    ->where('is_active', true)
+                    ->get();
+                $employeeId = $employees->isEmpty() ? null : $employees->random()->id;
+            }
 
-        $oldStatus = $appointment->status;
-        $appointment->employee_id = $employeeId;
-        $appointment->assigned_time = $request->assigned_time;
-        $appointment->assigned_by = Auth::id();
-        if ($appointment->status === Appointment::STATUS_PENDING) {
-            $appointment->status = Appointment::STATUS_ASSIGNED;
-        }
-        $appointment->save();
+            $oldStatus = $appointment->status;
+            $appointment->employee_id = $employeeId;
+            $appointment->assigned_time = $request->assigned_time;
+            $appointment->assigned_by = Auth::id();
+            if ($appointment->status === Appointment::STATUS_PENDING) {
+                $appointment->status = Appointment::STATUS_ASSIGNED;
+            }
+            $appointment->save();
 
-        if ($employeeId) {
-            $appointment->employees()->sync([$employeeId]);
-        }
+            if ($employeeId) {
+                $appointment->employees()->sync([$employeeId]);
+            }
 
-        AppointmentLog::create([
-            'appointment_id' => $appointment->id,
-            'action_by' => Auth::id(),
-            'old_status' => $oldStatus,
-            'new_status' => $appointment->status,
-            'notes' => 'Assigned to employee',
-        ]);
+            AppointmentLog::create([
+                'appointment_id' => $appointment->id,
+                'action_by' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => $appointment->status,
+                'notes' => 'Assigned to employee',
+            ]);
+        });
 
         return back()->with('success', __('Booking assigned successfully.'));
     }
@@ -256,19 +267,21 @@ class AppointmentController extends Controller
 
         $request->validate(['cancel_reason' => 'nullable|string|max:500']);
 
-        $oldStatus = $appointment->status;
-        $appointment->update([
-            'status' => Appointment::STATUS_CANCELLED,
-            'cancel_reason' => $request->cancel_reason,
-        ]);
+        DB::transaction(function () use ($appointment, $request) {
+            $oldStatus = $appointment->status;
+            $appointment->update([
+                'status' => Appointment::STATUS_CANCELLED,
+                'cancel_reason' => $request->cancel_reason,
+            ]);
 
-        AppointmentLog::create([
-            'appointment_id' => $appointment->id,
-            'action_by' => Auth::id(),
-            'old_status' => $oldStatus,
-            'new_status' => Appointment::STATUS_CANCELLED,
-            'notes' => 'Booking cancelled',
-        ]);
+            AppointmentLog::create([
+                'appointment_id' => $appointment->id,
+                'action_by' => Auth::id(),
+                'old_status' => $oldStatus,
+                'new_status' => Appointment::STATUS_CANCELLED,
+                'notes' => 'Booking cancelled',
+            ]);
+        });
 
         return redirect()->route('admin.appointments.show', $appointment)
             ->with('success', __('Booking cancelled'));

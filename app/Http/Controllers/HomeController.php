@@ -130,6 +130,8 @@ class HomeController extends Controller
 
     public function trackLookup(Request $request)
     {
+        Appointment::expirePast();
+
         $request->validate([
             'ticket_number' => 'required|string',
             'phone' => 'required|string',
