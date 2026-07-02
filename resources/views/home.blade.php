@@ -117,6 +117,7 @@
     </div>
 
     {{-- 3. Registration benefits section (highlighted) --}}
+    @guest
     <div class="mt-16 py-16 px-8 bg-gradient-to-br from-rose-500 via-rose-600 to-amber-700 rounded-[2.5rem] text-center text-white shadow-xl shadow-rose-200/50">
         <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white/90 px-5 py-2 rounded-full text-sm font-medium mb-4 border border-white/20">
             ✨ {{ __('Exclusive Benefits') }}
@@ -156,8 +157,6 @@
             </div>
         </div>
 
-        {{-- 4. Login/register options (visitors only) --}}
-        @guest
         <div class="mt-12">
             <p class="text-rose-100 mb-8 text-lg">{{ __('Start Now') }}:</p>
             <div class="flex justify-center gap-4 flex-wrap">
@@ -171,8 +170,8 @@
                 </a>
             </div>
         </div>
-        @endguest
     </div>
+    @endguest
 
     {{-- 5. How It Works --}}
     <div class="mt-16 mb-16">
