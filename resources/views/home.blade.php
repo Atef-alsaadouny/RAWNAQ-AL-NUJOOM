@@ -324,26 +324,32 @@
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($testimonials as $rating)
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
-                <div class="flex gap-0.5 mb-3">
-                    @for($i = 1; $i <= 5; $i++)
-                    <svg class="w-5 h-5 {{ $i <= $rating->rating ? 'text-yellow-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    @endfor
+            <div class="bg-white rounded-3xl p-6 border border-rose-100/50" style="box-shadow: 0 8px 28px rgba(244,63,94,0.06)">
+                <div class="flex items-center justify-between w-full mb-4">
+                    <div class="flex flex-col text-right">
+                        <span class="font-bold text-gray-800 text-sm">{{ $rating->customer?->name ?? __('Verified Customer') }}</span>
+                        <div class="flex space-x-0.5 text-amber-400 mt-1">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-4 h-4 {{ $i <= $rating->rating ? 'text-amber-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+                    </div>
                 </div>
                 @if($rating->comment)
-                <p class="text-gray-600 text-sm leading-relaxed mb-4 italic">"{{ $rating->comment }}"</p>
+                <p class="text-gray-700 font-medium my-4 text-right" dir="auto">"{{ $rating->comment }}"</p>
                 @endif
-                <div class="mt-auto flex items-center gap-2 pt-3 border-t border-gray-100">
-                    <div class="w-8 h-8 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center text-sm font-bold text-rose-600 shrink-0">
-                        {{ substr($rating->customer?->name ?? 'G', 0, 1) }}
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-800">{{ $rating->customer?->name ?? __('Guest') }}</p>
-                        @if($rating->appointment?->display_services)
-                        <p class="text-xs text-gray-400">{{ $rating->appointment->display_services }}</p>
-                        @endif
-                    </div>
+                @if($rating->appointment?->display_services)
+                <div class="mt-4 flex justify-start">
+                    <span class="bg-rose-50/60 text-rose-600 text-xs px-3 py-1.5 rounded-full font-medium">
+                        {{ $rating->appointment->display_services }}
+                    </span>
                 </div>
+                @endif
             </div>
             @endforeach
         </div>

@@ -44,9 +44,9 @@ class HomeController extends Controller
             })
             ->with(['customer', 'appointment.services'])
             ->orderByDesc('rating')
+            ->latest()
             ->take(3)
-            ->get()
-            ->shuffle();
+            ->get();
 
         return view('home', compact('upcomingAppointment', 'services', 'packages', 'testimonials'));
     }
