@@ -19,7 +19,7 @@
             <div class="font-bold text-gray-800 truncate">{{ $apt->customer_name ?? $apt->customer?->name }}</div>
             <div class="text-xs text-gray-500 truncate">{{ $apt->display_services ?: '—' }}</div>
         </a>
-        <div class="shrink-0 md:mr-3 self-stretch md:self-auto flex items-center gap-2">
+        <div class="shrink-0 md:mr-3 self-stretch md:self-auto flex flex-col md:flex-row items-stretch md:items-center gap-1 md:gap-2">
             <a href="{{ route('employee.appointment.show', $apt) }}" class="inline-flex items-center gap-1 text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 md:px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">{{ __('Show') }}</a>
             @if($apt->status === Appointment::STATUS_ASSIGNED)
                 <form method="POST" action="{{ route('employee.appointment.status', $apt) }}" class="w-full md:w-auto flex-shrink-0">
