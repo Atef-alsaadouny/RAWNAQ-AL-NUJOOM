@@ -83,7 +83,7 @@
                 <span>
                     @switch($appointment->status)
                         @case(Appointment::STATUS_PENDING)
-                            @if($appointment->appointment_date?->isPast())
+                            @if($appointment->appointment_date?->isBefore(now()->startOfDay()))
                                 <span class="inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg text-xs font-medium leading-none">{{ __('Missed') }}</span>
                             @else
                                 <span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded-lg text-xs font-bold leading-none border border-yellow-200/50">{{ __('Pending') }}</span>
