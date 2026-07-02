@@ -54,6 +54,8 @@ class Appointment extends Model
         'completed_at',
         'total_price',
         'payment_status',
+        'ticket_number',
+        'guest_token',
     ];
 
     protected function casts(): array
