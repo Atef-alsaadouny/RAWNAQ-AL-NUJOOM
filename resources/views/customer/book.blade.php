@@ -395,7 +395,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var loadedAt = form.querySelector('input[name="form_loaded_at"]');
     if (loadedAt) loadedAt.value = Date.now();
 
-    form.addEventListener('submit', function() {
+    form.addEventListener('submit', function(e) {
+        var hasService = document.querySelector('input[name="service_ids[]"]:checked');
+        var hasPackage = document.querySelector('input[name="package_ids[]"]:checked');
+        if (!hasService && !hasPackage) {
+            e.preventDefault();
+            alert('{{ __("Please select at least one service or package") }}');
+            return;
+        }
         var btn = document.getElementById('submitBtn');
         if (btn) btn.disabled = true;
         var st = document.getElementById('submitText');

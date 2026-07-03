@@ -103,7 +103,15 @@ class BookingController extends Controller
         $rules = [
             'package_ids' => 'nullable|array',
             'package_ids.*' => $businessId ? Rule::exists('packages', 'id')->where('business_id', $businessId) : 'exists:packages,id',
-            'service_ids' => 'nullable|array',
+            'service_ids' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$request->filled('service_ids') && !$request->filled('package_ids')) {
+                        $fail(__('Please select at least one service or package'));
+                    }
+                },
+            ],
             'service_ids.*' => $businessId ? Rule::exists('services', 'id')->where('business_id', $businessId) : 'exists:services,id',
             'employee_id' => [
                 'nullable',
@@ -312,7 +320,15 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'service_ids' => 'nullable|array',
+            'service_ids' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$request->filled('service_ids') && !$request->filled('package_ids')) {
+                        $fail(__('Please select at least one service or package'));
+                    }
+                },
+            ],
             'service_ids.*' => 'exists:services,id',
             'package_ids' => 'nullable|array',
             'package_ids.*' => 'exists:packages,id',
@@ -422,7 +438,15 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'service_ids' => 'nullable|array',
+            'service_ids' => [
+                'nullable',
+                'array',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$request->filled('service_ids') && !$request->filled('package_ids')) {
+                        $fail(__('Please select at least one service or package'));
+                    }
+                },
+            ],
             'service_ids.*' => 'exists:services,id',
             'package_ids' => 'nullable|array',
             'package_ids.*' => 'exists:packages,id',
