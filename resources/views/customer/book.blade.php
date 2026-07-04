@@ -123,7 +123,7 @@
                 <p class="text-sm text-gray-400 mb-4 mr-7">{{ __('You can select more than one package') }}</p>
                 <div class="space-y-3">
                     @foreach($packages as $package)
-                    <label class="package-card border-2 rounded-2xl p-4 md:p-5 cursor-pointer transition-all duration-200 flex items-center gap-3 md:gap-4 {{ in_array($package->id, $preselectedPackageIds) ? 'border-rose-300 bg-rose-50/40 shadow-sm' : 'border-amber-100 bg-white hover:border-amber-300 hover:shadow-sm' }}">
+                    <label class="package-card border-2 rounded-2xl p-4 md:p-5 cursor-pointer transition-all duration-200 flex items-center gap-3 md:gap-4 {{ in_array($package->id, $preselectedPackageIds) ? 'border-rose-300 bg-rose-50/40 shadow-sm' : 'border-rose-100 bg-white hover:border-rose-200 hover:shadow-sm' }}">
                         <input type="checkbox" name="package_ids[]" value="{{ $package->id }}" class="package-checkbox w-5 h-5 text-rose-500 rounded"
                             {{ in_array($package->id, $preselectedPackageIds) ? 'checked' : '' }}
                             data-services="{{ $package->services->pluck('id')->join(',') }}"
@@ -173,7 +173,7 @@
                             }
                         }
                     @endphp
-                    <label class="service-item border-2 rounded-2xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex justify-between items-center gap-2 md:gap-4 {{ $inAnyPreselected ? 'border-rose-200 bg-rose-50/30' : 'border-amber-100 bg-white hover:border-amber-300 hover:shadow-sm' }}"
+                    <label class="service-item border-2 rounded-2xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex justify-between items-center gap-2 md:gap-4 {{ $inAnyPreselected ? 'border-rose-200 bg-rose-50/30' : 'border-rose-100 bg-white hover:border-rose-200 hover:shadow-sm' }}"
                         data-service-id="{{ $service->id }}"
                         data-package-service="{{ $inAnyPreselected ? 'true' : 'false' }}">
                         <div class="flex items-center gap-3 min-w-0">
@@ -250,7 +250,7 @@
                         ];
                     @endphp
 
-                <div id="autoAssignCard" class="relative border rounded-2xl p-6 cursor-pointer transition-all duration-250 w-full shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ !old('employee_id') ? 'border-rose-300 bg-rose-50 shadow-rose-200/50' : 'border-black/5 bg-white hover:shadow-md' }}" onclick="selectAutoAssign(this)">
+                <div id="autoAssignCard" class="relative border rounded-2xl p-6 cursor-pointer transition-all duration-250 w-full shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ !old('employee_id') ? 'border-rose-200 bg-rose-50/40 shadow-rose-100/30' : 'border-black/5 bg-white hover:shadow-md' }}" onclick="selectAutoAssign(this)">
                     <div class="flex items-center gap-4">
                         <div class="w-11 h-11 rounded-full bg-rose-100 flex items-center justify-center shrink-0 shadow-sm">
                             <span class="text-xl">✨</span>
@@ -297,29 +297,17 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="employeeContainer">
                         @foreach($employees as $emp)
                         @php $color = $avatarColors[$emp->name] ?? $palette[crc32($emp->name) % count($palette)]; @endphp
-                        <div class="emp-card relative border rounded-2xl px-3 py-3 text-center cursor-pointer transition-all duration-200 shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ old('employee_id') == $emp->id ? 'border-amber-500 bg-amber-50 shadow-amber-200/50' : 'border-black/5 bg-white hover:shadow-md' }}" data-value="{{ $emp->id }}" data-services='{{ $emp->services->isNotEmpty() ? json_encode($emp->services->pluck('name')->toArray()) : '[]' }}' onclick="selectEmployee(this)">
+                        <div class="emp-card relative border rounded-2xl px-3 py-3 text-center cursor-pointer transition-all duration-200 shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ old('employee_id') == $emp->id ? 'border-rose-200 bg-rose-50/40 shadow-rose-100/30' : 'border-black/5 bg-white hover:shadow-md' }}" data-value="{{ $emp->id }}" onclick="selectEmployee(this)">
                             <span class="check-badge absolute top-2 start-2 w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] {{ old('employee_id') == $emp->id ? '' : 'hidden' }}">✓</span>
                             <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1.5 shadow-sm" style="background-color: {{ $color['bg'] }};">
                                 <span class="font-bold text-base" style="color: {{ $color['text'] }};">{{ mb_substr($emp->name, 0, 1) }}</span>
                             </div>
                             <div class="font-semibold text-xs">{{ $emp->name }}</div>
-                            @if($emp->services->isNotEmpty())
-                            <button type="button" class="info-btn absolute end-1.5 w-5 h-5 rounded-full bg-gray-100 text-gray-400 hover:bg-amber-100 hover:text-amber-500 flex items-center justify-center transition-colors" style="bottom: 2px;" onclick="event.stopPropagation();">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </button>
-                            @endif
                         </div>
                         @endforeach
                     </div>
                 </div>
 
-                <div id="empPopup" class="absolute z-20 hidden pointer-events-none" style="top: 0; left: 0;">
-                    <div class="bg-white border border-amber-200 rounded-xl shadow-xl p-3 min-w-[180px] max-w-[220px] transition-all duration-200 opacity-0 scale-95 -translate-y-1">
-                        <div class="font-semibold text-sm text-gray-800" id="empPopupName"></div>
-                        <div class="text-[10px] text-gray-400 mt-0.5">{{ __('Specialized in') }}</div>
-                        <ul class="mt-1 space-y-0.5" id="empPopupServices"></ul>
-                    </div>
-                </div>
             </div>
             @endif
 
@@ -389,14 +377,14 @@ function selectAutoAssign(el) {
     document.getElementById('employeeInput').value = '';
 
     document.querySelectorAll('.emp-card').forEach(function(c) {
-        c.classList.remove('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+        c.classList.remove('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
         c.classList.add('border-black/5', 'bg-white');
         var badge = c.querySelector('.check-badge');
         if (badge) badge.classList.add('hidden');
     });
 
     el.classList.remove('border-black/5', 'bg-white', 'hover:shadow-md');
-    el.classList.add('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+    el.classList.add('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
 
     var icon = el.querySelector('.check-icon');
     if (icon) icon.classList.remove('hidden');
@@ -405,7 +393,6 @@ function selectAutoAssign(el) {
     section.classList.remove('max-h-[2000px]', 'opacity-100', 'mt-5');
     section.classList.add('max-h-0', 'opacity-0', 'mt-0');
 
-    hideEmployeePopup();
 }
 
 function selectEmployee(el) {
@@ -413,19 +400,19 @@ function selectEmployee(el) {
     document.getElementById('employeeInput').value = value;
 
     document.querySelectorAll('.emp-card').forEach(function(c) {
-        c.classList.remove('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+        c.classList.remove('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
         c.classList.add('border-black/5', 'bg-white');
         var badge = c.querySelector('.check-badge');
         if (badge) badge.classList.add('hidden');
     });
 
     el.classList.remove('border-black/5', 'bg-white');
-    el.classList.add('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+    el.classList.add('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
     var badge = el.querySelector('.check-badge');
     if (badge) badge.classList.remove('hidden');
 
     var autoCard = document.getElementById('autoAssignCard');
-    autoCard.classList.remove('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+    autoCard.classList.remove('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
     autoCard.classList.add('border-black/5', 'bg-white', 'hover:shadow-md');
 
     var icon = autoCard.querySelector('.check-icon');
@@ -436,100 +423,13 @@ function selectEmployee(el) {
     section.classList.add('max-h-[2000px]', 'opacity-100', 'mt-5');
 }
 
-function showEmployeePopup(el) {
-    var raw = el.getAttribute('data-services');
-    if (!raw) return;
-
-    var services;
-    try { services = JSON.parse(raw); } catch(e) { return; }
-    if (services.length === 0) return;
-
-    var popup = document.getElementById('empPopup');
-    var nameEl = el.querySelector('.font-semibold.text-xs');
-    document.getElementById('empPopupName').textContent = nameEl ? nameEl.textContent : '';
-
-    var list = document.getElementById('empPopupServices');
-    list.innerHTML = '';
-    services.forEach(function(s) {
-        var li = document.createElement('li');
-        li.className = 'text-xs text-gray-600 flex items-center gap-1.5';
-        li.innerHTML = '<span class="text-amber-500 font-bold text-[10px]">\u2713</span> ' + s;
-        list.appendChild(li);
-    });
-
-    var container = popup.parentElement;
-    var cardRect = el.getBoundingClientRect();
-    var containerRect = container.getBoundingClientRect();
-
-    var top = cardRect.bottom - containerRect.top + 6;
-    var left = Math.max(4, cardRect.left - containerRect.left);
-    var maxLeft = containerRect.width - 184;
-    if (left > maxLeft) left = maxLeft;
-
-    popup.style.top = top + 'px';
-    popup.style.left = left + 'px';
-
-    popup.classList.remove('hidden');
-    var inner = popup.querySelector('div');
-    inner.classList.remove('opacity-0', 'scale-95', '-translate-y-1');
-}
-
-function hideEmployeePopup() {
-    var popup = document.getElementById('empPopup');
-    var inner = popup.querySelector('div');
-    inner.classList.add('opacity-0', 'scale-95', '-translate-y-1');
-    setTimeout(function() {
-        popup.classList.add('hidden');
-    }, 200);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    var hoverTimer;
-
-    document.querySelectorAll('.emp-card').forEach(function(card) {
-        card.addEventListener('mouseenter', function() {
-            clearTimeout(hoverTimer);
-            showEmployeePopup(card);
-        });
-
-        card.addEventListener('mouseleave', function() {
-            var popup = document.getElementById('empPopup');
-            if (popup._clickOpened) return;
-            hoverTimer = setTimeout(hideEmployeePopup, 200);
-        });
-
-        var infoBtn = card.querySelector('.info-btn');
-        if (infoBtn) {
-            infoBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var popup = document.getElementById('empPopup');
-                if (popup._clickOpened && !popup.classList.contains('hidden')) {
-                    popup._clickOpened = false;
-                    hideEmployeePopup();
-                } else {
-                    popup._clickOpened = true;
-                    showEmployeePopup(card);
-                }
-            });
-        }
-    });
-
-    document.addEventListener('click', function(e) {
-        var popup = document.getElementById('empPopup');
-        if (popup._clickOpened && !popup.classList.contains('hidden')) {
-            if (!e.target.closest('.emp-card')) {
-                popup._clickOpened = false;
-                hideEmployeePopup();
-            }
-        }
-    });
-
     var selectBtn = document.getElementById('selectEmployeeBtn');
     if (selectBtn) {
         selectBtn.addEventListener('click', function() {
             var autoCard = document.getElementById('autoAssignCard');
             if (autoCard) {
-                autoCard.classList.remove('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+                autoCard.classList.remove('border-rose-200', 'bg-rose-50/40', 'shadow-rose-100/30');
                 autoCard.classList.add('border-black/5', 'bg-white', 'hover:shadow-md');
                 var icon = autoCard.querySelector('.check-icon');
                 if (icon) icon.classList.add('hidden');
