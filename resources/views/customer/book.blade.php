@@ -4,7 +4,7 @@
 @section('title', __('Book Appointment'))
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 py-6">
+<div class="max-w-3xl mx-auto px-4 md:px-5 lg:px-6 pt-6 pb-8">
     <div class="text-center mb-8">
         <h1 class="text-3xl font-black text-gray-800">{{ __('Book Your Appointment') }}</h1>
         <p class="text-gray-500 mt-1.5">{{ __('Choose the services you want and we will prepare everything') }}</p>
@@ -123,7 +123,7 @@
                 <p class="text-sm text-gray-400 mb-4 mr-7">{{ __('You can select more than one package') }}</p>
                 <div class="space-y-3">
                     @foreach($packages as $package)
-                    <label class="package-card border-2 rounded-2xl p-4 md:p-5 cursor-pointer transition-all duration-200 flex items-center gap-3 md:gap-4 {{ in_array($package->id, $preselectedPackageIds) ? 'border-rose-300 bg-rose-50/40 shadow-sm' : 'border-gray-100 bg-white hover:border-rose-200 hover:shadow-sm' }}">
+                    <label class="package-card border-2 rounded-2xl p-4 md:p-5 cursor-pointer transition-all duration-200 flex items-center gap-3 md:gap-4 {{ in_array($package->id, $preselectedPackageIds) ? 'border-rose-300 bg-rose-50/40 shadow-sm' : 'border-amber-100 bg-white hover:border-amber-300 hover:shadow-sm' }}">
                         <input type="checkbox" name="package_ids[]" value="{{ $package->id }}" class="package-checkbox w-5 h-5 text-rose-500 rounded"
                             {{ in_array($package->id, $preselectedPackageIds) ? 'checked' : '' }}
                             data-services="{{ $package->services->pluck('id')->join(',') }}"
@@ -173,7 +173,7 @@
                             }
                         }
                     @endphp
-                    <label class="service-item border-2 rounded-2xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex justify-between items-center gap-2 md:gap-4 {{ $inAnyPreselected ? 'border-rose-200 bg-rose-50/30' : 'border-gray-100 bg-white hover:border-rose-200 hover:shadow-sm' }}"
+                    <label class="service-item border-2 rounded-2xl p-3 md:p-4 cursor-pointer transition-all duration-200 flex justify-between items-center gap-2 md:gap-4 {{ $inAnyPreselected ? 'border-rose-200 bg-rose-50/30' : 'border-amber-100 bg-white hover:border-amber-300 hover:shadow-sm' }}"
                         data-service-id="{{ $service->id }}"
                         data-package-service="{{ $inAnyPreselected ? 'true' : 'false' }}">
                         <div class="flex items-center gap-3 min-w-0">
@@ -217,28 +217,108 @@
             </div>
 
             @if(isset($employees) && $employees->isNotEmpty())
-            <input type="hidden" name="employee_id" id="employeeInput" value="{{ old('employee_id', '') }}">
-            <div class="mb-8">
-                <div class="flex items-center gap-2 mb-1">
+<input type="hidden" name="employee_id" id="employeeInput" value="{{ old('employee_id', '') }}">
+            <div class="mb-10 relative">
+
+                <div class="flex items-center gap-2.5 mb-2">
                     <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    <label class="block text-gray-700 font-bold text-sm">{{ __('Choose Employee') }} <span class="text-gray-400 font-normal">{{ __('(Optional)') }}</span></label>
+                    <label class="text-[22px] font-semibold text-gray-800">{{ __('Choose Employee') }} <span class="text-gray-400 font-normal text-base">{{ __('(Optional)') }}</span></label>
                 </div>
-                <p class="text-sm text-gray-400 mb-3 mr-7">{{ __('Choose the employee you prefer') }}</p>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="employeeContainer">
-                    <div class="employee-option flex flex-col items-center gap-2 rounded-2xl px-4 py-5 cursor-pointer transition-all duration-200 border-2 text-center {{ !old('employee_id') ? 'border-rose-300 bg-rose-50 shadow-sm ring-2 ring-rose-400' : 'border-gray-100 bg-white text-gray-500 hover:border-amber-200 hover:text-amber-600' }}" data-value="">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <p class="text-sm text-gray-400 mb-6">{{ __("We'll assign the best available employee for your appointment.") }}</p>
+
+                    @php
+                        $avatarColors = [
+                            'Dalia' => ['bg' => '#FEF3C7', 'text' => '#92400E'],
+                            'Marwa' => ['bg' => '#FCE7F3', 'text' => '#9D174D'],
+                            'Tala'  => ['bg' => '#FFE4E6', 'text' => '#9F1239'],
+                            'Shrouk'=> ['bg' => '#DBEAFE', 'text' => '#1E40AF'],
+                            'Dana'  => ['bg' => '#D1FAE5', 'text' => '#065F46'],
+                            'Roaa'  => ['bg' => '#EDE9FE', 'text' => '#5B21B6'],
+                            'Jana'  => ['bg' => '#FFEDD5', 'text' => '#9A3412'],
+                        ];
+                        $palette = [
+                            ['bg' => '#FCE4EC', 'text' => '#880E4F'],
+                            ['bg' => '#E0F7FA', 'text' => '#006064'],
+                            ['bg' => '#F3E5F5', 'text' => '#6A1B9A'],
+                            ['bg' => '#E8F5E9', 'text' => '#1B5E20'],
+                            ['bg' => '#FFF3E0', 'text' => '#E65100'],
+                            ['bg' => '#E1F5FE', 'text' => '#01579B'],
+                            ['bg' => '#F1F8E9', 'text' => '#33691E'],
+                            ['bg' => '#FBE9E7', 'text' => '#BF360C'],
+                            ['bg' => '#E8EAF6', 'text' => '#283593'],
+                            ['bg' => '#F9FBE7', 'text' => '#827717'],
+                        ];
+                    @endphp
+
+                <div id="autoAssignCard" class="relative border rounded-2xl p-6 cursor-pointer transition-all duration-250 w-full shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ !old('employee_id') ? 'border-rose-300 bg-rose-50 shadow-rose-200/50' : 'border-black/5 bg-white hover:shadow-md' }}" onclick="selectAutoAssign(this)">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-rose-100 flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="text-xl">✨</span>
                         </div>
-                        <span class="font-medium text-sm">{{ __('Without Employee') }}</span>
-                    </div>
-                    @foreach($employees as $emp)
-                    <div class="employee-option flex flex-col items-center gap-2 rounded-2xl px-4 py-5 cursor-pointer transition-all duration-200 border-2 text-center {{ old('employee_id') == $emp->id ? 'border-rose-300 bg-rose-50 shadow-sm ring-2 ring-rose-400' : 'border-gray-100 bg-white text-gray-500 hover:border-amber-200 hover:text-amber-600' }}" data-value="{{ $emp->id }}">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-100 to-rose-200 flex items-center justify-center shadow-sm">
-                            <span class="text-rose-600 font-bold text-lg">{{ mb_substr($emp->name, 0, 1) }}</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-base font-semibold text-gray-800">{{ __('Auto Assign') }}</span>
+                                <span class="text-[11px] font-medium text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">{{ __('(Recommended)') }}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ __("We'll automatically assign the best available employee based on your appointment.") }}</p>
+                            <p class="text-[11px] text-rose-500 mt-2 font-medium leading-tight">&check; {{ __('Fastest option for most customers') }}</p>
                         </div>
-                        <span class="font-medium text-sm">{{ $emp->name }}</span>
+                        <div class="check-icon shrink-0 {{ !old('employee_id') ? '' : 'hidden' }}">
+                            <svg class="w-6 h-6 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" class="text-rose-500" opacity="0.12"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </div>
                     </div>
-                    @endforeach
+                </div>
+
+                <div class="flex items-center gap-3 mt-8 mb-8">
+                    <div class="flex-1 border-t" style="border-color: #E8E8E8;"></div>
+                    <span class="text-[13px] font-medium" style="color: #9CA3AF;">{{ __('Or') }}</span>
+                    <div class="flex-1 border-t" style="border-color: #E8E8E8;"></div>
+                </div>
+
+                <div id="manualCard" class="border border-black/5 bg-white rounded-2xl p-6 shadow-[0_6px_20px_rgba(0,0,0,.05)]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="text-lg">👩</span>
+                        </div>
+                        <div>
+                            <div class="text-base font-semibold text-gray-800">{{ __('Do you have a preferred employee?') }}</div>
+                            <div class="text-xs text-gray-400 mt-0.5 leading-relaxed">{{ __("Choose a specific employee if you'd like.") }}</div>
+                        </div>
+                    </div>
+                    <button type="button" id="selectEmployeeBtn" class="mt-5 h-11 px-6 rounded-xl bg-gradient-to-l from-rose-500 to-rose-600 text-white font-medium text-sm shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-100 transition-all duration-200">
+                        {{ __('Show Employees') }}
+                    </button>
+                </div>
+
+                <div id="employeeSection" class="overflow-hidden transition-all duration-[250ms] ease-in-out {{ old('employee_id') ? 'max-h-[2000px] opacity-100 mt-5' : 'max-h-0 opacity-0 mt-0' }}">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="employeeContainer">
+                        @foreach($employees as $emp)
+                        @php $color = $avatarColors[$emp->name] ?? $palette[crc32($emp->name) % count($palette)]; @endphp
+                        <div class="emp-card relative border rounded-2xl px-3 py-3 text-center cursor-pointer transition-all duration-200 shadow-[0_6px_20px_rgba(0,0,0,.05)] {{ old('employee_id') == $emp->id ? 'border-amber-500 bg-amber-50 shadow-amber-200/50' : 'border-black/5 bg-white hover:shadow-md' }}" data-value="{{ $emp->id }}" data-services='{{ $emp->services->isNotEmpty() ? json_encode($emp->services->pluck('name')->toArray()) : '[]' }}' onclick="selectEmployee(this)">
+                            <span class="check-badge absolute top-2 start-2 w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] {{ old('employee_id') == $emp->id ? '' : 'hidden' }}">✓</span>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1.5 shadow-sm" style="background-color: {{ $color['bg'] }};">
+                                <span class="font-bold text-base" style="color: {{ $color['text'] }};">{{ mb_substr($emp->name, 0, 1) }}</span>
+                            </div>
+                            <div class="font-semibold text-xs">{{ $emp->name }}</div>
+                            @if($emp->services->isNotEmpty())
+                            <button type="button" class="info-btn absolute end-1.5 w-5 h-5 rounded-full bg-gray-100 text-gray-400 hover:bg-amber-100 hover:text-amber-500 flex items-center justify-center transition-colors" style="bottom: 2px;" onclick="event.stopPropagation();">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </button>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div id="empPopup" class="absolute z-20 hidden pointer-events-none" style="top: 0; left: 0;">
+                    <div class="bg-white border border-amber-200 rounded-xl shadow-xl p-3 min-w-[180px] max-w-[220px] transition-all duration-200 opacity-0 scale-95 -translate-y-1">
+                        <div class="font-semibold text-sm text-gray-800" id="empPopupName"></div>
+                        <div class="text-[10px] text-gray-400 mt-0.5">{{ __('Specialized in') }}</div>
+                        <ul class="mt-1 space-y-0.5" id="empPopupServices"></ul>
+                    </div>
                 </div>
             </div>
             @endif
@@ -273,6 +353,13 @@
                 </div>
                 <p class="text-sm text-gray-400 mb-3 mr-7">{{ __('Choose your preferred payment method') }}</p>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="paymentContainer">
+                    {{-- Payment Unavailable Toast --}}
+                    <div id="paymentNotify" class="hidden opacity-0 col-span-full bg-gradient-to-l from-amber-500 to-orange-500 text-white px-5 py-3 rounded-2xl shadow-lg shadow-amber-200/30 flex items-center gap-3 text-sm font-medium mb-1.5">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/>
+                        </svg>
+                        <span>{{ __('This service is currently unavailable') }}</span>
+                    </div>
                     @foreach(\App\Models\Payment::availableMethods() as $method)
                         @php $isCash = $method === \App\Models\Payment::METHOD_CASH; @endphp
                         <label class="payment-option border-2 rounded-2xl px-4 py-3 cursor-pointer transition-all duration-200 flex items-center gap-2.5 border-gray-100 bg-white text-gray-500 hover:border-amber-200 hover:text-amber-600">
@@ -280,28 +367,6 @@
                             <span class="font-medium">{{ $isCash ? __('Cash') : ($method === \App\Models\Payment::METHOD_KNET ? __('KNET') : ($method === \App\Models\Payment::METHOD_APPLE_PAY ? __('Apple Pay') : __('Google Pay'))) }}</span>
                         </label>
                     @endforeach
-                </div>
-            </div>
-
-            {{-- Payment Warning Modal --}}
-            <div id="paymentWarningModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-black/40" onclick="resetToCash()"></div>
-                <div class="relative bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center">
-                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">{{ __('Payment Confirmation') }}</h3>
-                    <p class="text-sm text-gray-500 mb-6">{{ __('Payment must be made at the salon upon arrival for non-Cash methods.') }}</p>
-                    <div class="flex gap-3">
-                        <button type="button" onclick="hidePaymentWarning()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white py-3 rounded-2xl font-bold transition-all duration-200">
-                            {{ __('Got it, Continue') }}
-                        </button>
-                        <button type="button" onclick="resetToCash()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-2xl font-bold transition-all duration-200">
-                            {{ __('Go Back') }}
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -320,28 +385,174 @@
 </div>
 
 <script>
+function selectAutoAssign(el) {
+    document.getElementById('employeeInput').value = '';
+
+    document.querySelectorAll('.emp-card').forEach(function(c) {
+        c.classList.remove('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+        c.classList.add('border-black/5', 'bg-white');
+        var badge = c.querySelector('.check-badge');
+        if (badge) badge.classList.add('hidden');
+    });
+
+    el.classList.remove('border-black/5', 'bg-white', 'hover:shadow-md');
+    el.classList.add('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+
+    var icon = el.querySelector('.check-icon');
+    if (icon) icon.classList.remove('hidden');
+
+    var section = document.getElementById('employeeSection');
+    section.classList.remove('max-h-[2000px]', 'opacity-100', 'mt-5');
+    section.classList.add('max-h-0', 'opacity-0', 'mt-0');
+
+    hideEmployeePopup();
+}
+
 function selectEmployee(el) {
     var value = el.getAttribute('data-value');
     document.getElementById('employeeInput').value = value;
-    document.querySelectorAll('.employee-option').forEach(function(opt) {
-        opt.classList.remove('border-rose-300', 'bg-rose-50', 'text-rose-700', 'shadow-sm', 'ring-2', 'ring-rose-400');
-        opt.classList.add('border-gray-100', 'bg-white', 'text-gray-500', 'hover:border-amber-200', 'hover:text-amber-600');
+
+    document.querySelectorAll('.emp-card').forEach(function(c) {
+        c.classList.remove('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+        c.classList.add('border-black/5', 'bg-white');
+        var badge = c.querySelector('.check-badge');
+        if (badge) badge.classList.add('hidden');
     });
-    el.classList.add('border-rose-300', 'bg-rose-50', 'text-rose-700', 'shadow-sm', 'ring-2', 'ring-rose-400');
-    el.classList.remove('border-gray-100', 'bg-white', 'text-gray-500', 'hover:border-amber-200', 'hover:text-amber-600');
+
+    el.classList.remove('border-black/5', 'bg-white');
+    el.classList.add('border-amber-500', 'bg-amber-50', 'shadow-amber-200/50');
+    var badge = el.querySelector('.check-badge');
+    if (badge) badge.classList.remove('hidden');
+
+    var autoCard = document.getElementById('autoAssignCard');
+    autoCard.classList.remove('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+    autoCard.classList.add('border-black/5', 'bg-white', 'hover:shadow-md');
+
+    var icon = autoCard.querySelector('.check-icon');
+    if (icon) icon.classList.add('hidden');
+
+    var section = document.getElementById('employeeSection');
+    section.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+    section.classList.add('max-h-[2000px]', 'opacity-100', 'mt-5');
+}
+
+function showEmployeePopup(el) {
+    var raw = el.getAttribute('data-services');
+    if (!raw) return;
+
+    var services;
+    try { services = JSON.parse(raw); } catch(e) { return; }
+    if (services.length === 0) return;
+
+    var popup = document.getElementById('empPopup');
+    var nameEl = el.querySelector('.font-semibold.text-xs');
+    document.getElementById('empPopupName').textContent = nameEl ? nameEl.textContent : '';
+
+    var list = document.getElementById('empPopupServices');
+    list.innerHTML = '';
+    services.forEach(function(s) {
+        var li = document.createElement('li');
+        li.className = 'text-xs text-gray-600 flex items-center gap-1.5';
+        li.innerHTML = '<span class="text-amber-500 font-bold text-[10px]">\u2713</span> ' + s;
+        list.appendChild(li);
+    });
+
+    var container = popup.parentElement;
+    var cardRect = el.getBoundingClientRect();
+    var containerRect = container.getBoundingClientRect();
+
+    var top = cardRect.bottom - containerRect.top + 6;
+    var left = Math.max(4, cardRect.left - containerRect.left);
+    var maxLeft = containerRect.width - 184;
+    if (left > maxLeft) left = maxLeft;
+
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+
+    popup.classList.remove('hidden');
+    var inner = popup.querySelector('div');
+    inner.classList.remove('opacity-0', 'scale-95', '-translate-y-1');
+}
+
+function hideEmployeePopup() {
+    var popup = document.getElementById('empPopup');
+    var inner = popup.querySelector('div');
+    inner.classList.add('opacity-0', 'scale-95', '-translate-y-1');
+    setTimeout(function() {
+        popup.classList.add('hidden');
+    }, 200);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.employee-option').forEach(function(el) {
-        el.addEventListener('click', function() {
-            selectEmployee(this);
+    var hoverTimer;
+
+    document.querySelectorAll('.emp-card').forEach(function(card) {
+        card.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimer);
+            showEmployeePopup(card);
         });
+
+        card.addEventListener('mouseleave', function() {
+            var popup = document.getElementById('empPopup');
+            if (popup._clickOpened) return;
+            hoverTimer = setTimeout(hideEmployeePopup, 200);
+        });
+
+        var infoBtn = card.querySelector('.info-btn');
+        if (infoBtn) {
+            infoBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var popup = document.getElementById('empPopup');
+                if (popup._clickOpened && !popup.classList.contains('hidden')) {
+                    popup._clickOpened = false;
+                    hideEmployeePopup();
+                } else {
+                    popup._clickOpened = true;
+                    showEmployeePopup(card);
+                }
+            });
+        }
     });
+
+    document.addEventListener('click', function(e) {
+        var popup = document.getElementById('empPopup');
+        if (popup._clickOpened && !popup.classList.contains('hidden')) {
+            if (!e.target.closest('.emp-card')) {
+                popup._clickOpened = false;
+                hideEmployeePopup();
+            }
+        }
+    });
+
+    var selectBtn = document.getElementById('selectEmployeeBtn');
+    if (selectBtn) {
+        selectBtn.addEventListener('click', function() {
+            var autoCard = document.getElementById('autoAssignCard');
+            if (autoCard) {
+                autoCard.classList.remove('border-rose-300', 'bg-rose-50', 'shadow-rose-200/50');
+                autoCard.classList.add('border-black/5', 'bg-white', 'hover:shadow-md');
+                var icon = autoCard.querySelector('.check-icon');
+                if (icon) icon.classList.add('hidden');
+            }
+
+            document.getElementById('employeeInput').value = '';
+
+            var section = document.getElementById('employeeSection');
+            section.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+            section.classList.add('max-h-[2000px]', 'opacity-100', 'mt-5');
+        });
+    }
+
+    var empInput = document.getElementById('employeeInput');
+    if (empInput && empInput.value !== '') {
+        var section = document.getElementById('employeeSection');
+        var container = document.getElementById('employeeContainer');
+        if (section && container) {
+            section.style.maxHeight = container.scrollHeight + 'px';
+        }
+    }
 });
-
 // Payment method
-var hasConfirmedPayment = false;
-
 function applyPaymentVisual() {
     document.querySelectorAll('.payment-option').forEach(function(opt) {
         var radio = opt.querySelector('.payment-radio');
@@ -355,25 +566,24 @@ function applyPaymentVisual() {
     });
 }
 
-function showPaymentWarning() {
-    var el = document.getElementById('paymentWarningModal');
-    if (el) el.classList.remove('hidden');
-}
-
-function hidePaymentWarning() {
-    var el = document.getElementById('paymentWarningModal');
-    if (el) el.classList.add('hidden');
-    hasConfirmedPayment = true;
-}
-
-function resetToCash() {
-    hidePaymentWarning();
+function showPaymentNotify() {
+    var el = document.getElementById('paymentNotify');
+    if (!el) return;
+    el.classList.remove('hidden');
+    el.style.transition = 'opacity 0.3s ease-out';
+    el.style.opacity = '1';
+    setTimeout(function() {
+        el.style.transition = 'opacity 0.3s ease-in';
+        el.style.opacity = '0';
+        setTimeout(function() {
+            el.classList.add('hidden');
+            el.style.transition = '';
+            el.style.opacity = '';
+        }, 300);
+    }, 3000);
     document.querySelectorAll('.payment-radio').forEach(function(r) {
-        if (r.value === '{{ Payment::METHOD_CASH }}') {
-            r.checked = true;
-        }
+        if (r.value === '{{ Payment::METHOD_CASH }}') r.checked = true;
     });
-    hasConfirmedPayment = false;
     applyPaymentVisual();
 }
 
@@ -381,8 +591,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.payment-radio').forEach(function(radio) {
         radio.addEventListener('change', function() {
             applyPaymentVisual();
-            if (this.value !== '{{ Payment::METHOD_CASH }}' && !hasConfirmedPayment) {
-                showPaymentWarning();
+            if (this.value !== '{{ Payment::METHOD_CASH }}') {
+                showPaymentNotify();
             }
         });
     });

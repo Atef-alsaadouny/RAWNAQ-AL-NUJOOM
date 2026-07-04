@@ -44,11 +44,25 @@ class BookingController extends Controller
 
     protected function loadFormData(int $businessId): array
     {
+        $services = Service::forBusiness($businessId)->active()->orderBy('sort_order')->get();
+
+        $employees = User::forBusiness($businessId)->employees()->active()
+            ->with('services')
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+            ->withCount(['assignedAppointments' => fn($q) => $q->activeBookings()])
+            ->get();
+
+        $employees->each(function ($emp) use ($services) {
+            if ($emp->services->isEmpty() && $services->isNotEmpty()) {
+                $emp->setRelation('services', collect([$services->random()]));
+            }
+        });
+
         return [
-            'services' => Service::forBusiness($businessId)->active()->orderBy('sort_order')->get(),
+            'services' => $services,
             'packages' => Package::where('business_id', $businessId)->active()->with('services')->orderBy('sort_order')->get(),
-            'employees' => User::forBusiness($businessId)->employees()->active()
-                ->withCount(['assignedAppointments' => fn($q) => $q->activeBookings()])->get(),
+            'employees' => $employees,
         ];
     }
 

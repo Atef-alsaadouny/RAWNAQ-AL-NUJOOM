@@ -134,6 +134,10 @@ class EmployeeController extends Controller
             'services.*' => Rule::exists('services', 'id')->where('business_id', Auth::user()->business_id),
         ]);
 
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        }
+
         $employee->update($validated);
 
         // تحديث الخدمات المرتبطة بالموظف
