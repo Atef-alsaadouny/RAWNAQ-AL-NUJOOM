@@ -79,18 +79,21 @@
                             <p class="text-gray-500 text-sm">{{ __('Fri: 1:00 PM - 8:00 PM') }}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4 p-4 bg-amber-50/50 rounded-xl">
-                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <a href="https://maps.app.goo.gl/z74FLJLEYgHPfVT3A" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 p-4 bg-amber-50/50 rounded-xl hover:bg-amber-100/60 transition-all duration-200 group">
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-amber-200 transition-colors">
                             <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
                         <div>
-                            <p class="font-medium text-gray-700 text-sm">{{ __('Location') }}</p>
+                            <p class="font-medium text-gray-700 text-sm flex items-center gap-1.5">
+                                {{ __('Location') }}
+                                <svg class="w-3.5 h-3.5 text-amber-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </p>
                             <p class="text-gray-500 text-sm">{{ __("Kuwait — Salmiya, Arabian Gulf Street") }}</p>
                         </div>
-                    </div>
+                    </a>
                     <div class="flex items-center gap-4 p-4 bg-rose-50/50 rounded-xl">
                         <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
