@@ -143,7 +143,7 @@ class HomeController extends Controller
     {
         $phone = $request->query('phone');
         if (!$phone || $phone !== $appointment->customer_phone) {
-            return redirect()->route('track')->with('error', __('No booking with this information'));
+            return redirect()->route('track')->with('error', __('The entered phone number does not match the booking'));
         }
 
         $appointment->load(['services', 'employee', 'packages', 'payment']);
@@ -157,11 +157,20 @@ class HomeController extends Controller
         $request->validate([
             'ticket_number' => 'required|string',
             'phone' => 'required|string',
+        ], [
+            'ticket_number.required' => __('Please enter your booking number and phone number'),
+            'phone.required' => __('Please enter your booking number and phone number'),
         ]);
 
         $clean = $request->ticket_number
             ? str_replace(['TKT-', '-'], '', strtoupper($request->ticket_number))
             : null;
+
+        $ticketExists = Appointment::where('ticket_number', $clean)->exists();
+
+        if (!$ticketExists) {
+            return back()->withInput()->with('error', __('The entered booking number is incorrect'));
+        }
 
         $appointment = Appointment::with(['services', 'employee', 'employees', 'packages'])
             ->where('ticket_number', $clean)
@@ -169,7 +178,7 @@ class HomeController extends Controller
             ->first();
 
         if (!$appointment) {
-            return back()->with('error', __('No booking with this information'));
+            return back()->withInput()->with('error', __('The entered phone number does not match the booking'));
         }
 
         $params = [

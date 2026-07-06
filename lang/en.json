@@ -645,5 +645,10 @@
     "We'll assign the best employee based on:": "We'll assign the best employee based on:",
     "Choose a specific employee if you already have someone you prefer.": "Choose a specific employee if you already have someone you prefer.",
     "We'll automatically assign the best available employee based on your appointment.": "We'll automatically assign the best available employee based on your appointment.",
-    "Choose a specific employee if you'd like.": "Choose a specific employee if you'd like."
+    "Choose a specific employee if you'd like.": "Choose a specific employee if you'd like.",
+    "Booking Number": "Booking Number",
+    "The entered booking number is incorrect": "The entered booking number is incorrect",
+    "Please enter your booking number and phone number": "Please enter your booking number and phone number",
+    "The entered phone number does not match the booking": "The entered phone number does not match the booking",
+    "Enter your booking number and phone number to track your booking": "Enter your booking number and phone number to track your booking"
 }

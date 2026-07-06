@@ -10,7 +10,7 @@
 
         {{-- رقم التذكرة --}}
         <div class="text-center mb-8">
-            <p class="text-gray-400 text-sm mb-2">{{ __('Ticket Number') }}</p>
+            <p class="text-gray-400 text-sm mb-2">{{ __('Booking Number') }}</p>
             <div class="text-5xl md:text-6xl font-black tracking-widest leading-none text-transparent bg-clip-text bg-gradient-to-l from-rose-600 to-amber-500">
                 {{ $appointment->ticket_number }}
             </div>

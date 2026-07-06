@@ -20,21 +20,27 @@
 
         {{-- عنوان --}}
         <h1 class="text-2xl font-bold text-gray-800 text-center mb-2">{{ __('Track Your Booking') }}</h1>
-        <p class="text-gray-500 text-center text-sm mb-8 leading-relaxed">{{ __("Enter your ticket number with phone number, or phone number only") }}</p>
+        <p class="text-gray-500 text-center text-sm mb-8 leading-relaxed">{{ __("Enter your booking number and phone number to track your booking") }}</p>
 
         {{-- نموذج البحث --}}
         <form method="POST" action="{{ route('track.lookup') }}">
             @csrf
 
-            {{-- رقم التذكرة --}}
+            {{-- رقم الحجز --}}
             <div class="mb-4">
-                <label class="block text-gray-700 font-medium text-sm mb-2">{{ __('Ticket Number') }}</label>
+                <label class="block text-gray-700 font-medium text-sm mb-2">{{ __('Booking Number') }}</label>
                 <div class="relative">
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🎫</span>
-                    <input type="text" name="ticket_number" dir="ltr"
-                        class="w-full border border-gray-200 rounded-xl px-4 pr-11 py-3 text-center text-lg font-bold text-gray-800 tracking-widest focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-200"
+                    <input type="text" name="ticket_number" value="{{ old('ticket_number') }}" dir="ltr"
+                        class="w-full border rounded-xl px-4 pr-11 py-3 text-center text-lg font-bold text-gray-800 tracking-widest transition-all duration-200 @error('ticket_number') border-red-400 bg-red-50 ring-1 ring-red-400 @else border-gray-200 focus:ring-2 focus:ring-rose-400 focus:border-transparent @enderror"
                         placeholder="00001">
                 </div>
+                @error('ticket_number')
+                <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1.5 @if(app()->getLocale() === 'ar') text-right @endif">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    {{ $message }}
+                </p>
+                @enderror
             </div>
 
             {{-- رقم الهاتف --}}
@@ -42,10 +48,16 @@
                 <label class="block text-gray-700 font-medium text-sm mb-2">{{ __('Phone Number') }}</label>
                 <div class="relative">
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">📞</span>
-                    <input type="text" name="phone" dir="ltr"
-                        class="w-full border border-gray-200 rounded-xl px-4 pr-11 py-3 text-center text-lg font-bold text-gray-800 tracking-wide focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-200"
+                    <input type="text" name="phone" value="{{ old('phone') }}" dir="ltr"
+                        class="w-full border rounded-xl px-4 pr-11 py-3 text-center text-lg font-bold text-gray-800 tracking-wide transition-all duration-200 @error('phone') border-red-400 bg-red-50 ring-1 ring-red-400 @else border-gray-200 focus:ring-2 focus:ring-rose-400 focus:border-transparent @enderror"
                         placeholder="5xxxxxxx">
                 </div>
+                @error('phone')
+                <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1.5 @if(app()->getLocale() === 'ar') text-right @endif">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    {{ $message }}
+                </p>
+                @enderror
             </div>
 
             {{-- زر البحث --}}

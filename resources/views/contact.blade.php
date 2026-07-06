@@ -22,18 +22,21 @@
         <div class="bg-gradient-to-b from-rose-50 via-white to-amber-50 rounded-[2.5rem] shadow-sm border border-rose-100/50 p-10 md:p-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-8">{{ __('Contact Information') }}</h2>
             <div class="space-y-6">
-                <div class="flex items-start gap-5 p-5 bg-white/80 rounded-2xl">
-                    <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <a href="https://maps.app.goo.gl/z74FLJLEYgHPfVT3A" target="_blank" rel="noopener noreferrer" class="flex items-start gap-5 p-5 bg-white/80 rounded-2xl hover:bg-rose-50/60 transition-all duration-200 group">
+                    <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-rose-200 transition-colors">
                         <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                     </div>
-                    <div>
-                        <p class="font-bold text-gray-800 text-sm mb-1">{{ __('Location') }}</p>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-800 text-sm mb-1 flex items-center gap-1.5">
+                            {{ __('Location') }}
+                            <svg class="w-3.5 h-3.5 text-rose-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </p>
                         <p class="text-gray-500 text-[15px]">{{ __("Kuwait — Salmiya, Arabian Gulf Street") }}</p>
                     </div>
-                </div>
+                </a>
                 <div class="flex items-start gap-5 p-5 bg-white/80 rounded-2xl">
                     <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
                         <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
