@@ -1,59 +1,184 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <img src="https://rawnaq-al-nujoom.onrender.com/images/logo.webp" alt="Rawnaq Al Nujoom Logo" width="120" />
+  <h1 align="center">راونق النجوم | Rawnaq Al Nujoom</h1>
+  <p align="center"><strong>Beauty Salon Management System</strong> — A full-stack booking & administration platform for beauty salons, serving real customers in Kuwait.</p>
+  <p align="center">
+    <a href="https://rawnaq-al-nujoom.onrender.com/" target="_blank"><strong>🌐 Live Demo →</strong></a>
+  </p>
+  <br>
+</div>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## About The Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Rawnaq Al Nujoom is a **production-grade, bilingual (Arabic/English) web application** built for a real beauty salon business in Kuwait. It replaces traditional phone-based booking and paper records with a complete digital ecosystem: an interactive public-facing website for clients, and dedicated dashboards for administrators, employees, and customers — all within a single unified platform.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The project demonstrates **full-stack proficiency**, **database-driven architecture**, **role-based access control**, **responsive UI design**, and **real-world deployment** using modern cloud infrastructure.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Live Demo
 
-## Learning Laravel
+🔗 [https://rawnaq-al-nujoom.onrender.com/](https://rawnaq-al-nujoom.onrender.com/)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+> The live demo is deployed on **Render** (web service) with a managed **Aiven** MySQL database. It runs in production and serves real user traffic.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Layer | Technology |
+|-------|------------|
+| **Backend Framework** | Laravel 12 (PHP 8.2) |
+| **Frontend** | Tailwind CSS, Alpine.js, JavaScript, Vite |
+| **Database** | MySQL (managed via Aiven Cloud) |
+| **Authentication** | Laravel Breeze (session-based, custom guards) |
+| **Authorization & Roles** | Spatie Laravel Permission (Admin, Employee, Customer) |
+| **Localization** | i18n with full Arabic/English support (`lang/ar.json`, `lang/en.json`) |
+| **Payments** | Integrated payment gateway (KNET / Visa / Mastercard) |
+| **Mailing** | Laravel Mail (SMTP) — transactional emails for bookings & contact form |
+| **Queue & Scheduling** | Laravel Queue + Scheduler (appointment expiry, log cleanup) |
+| **Deployment** | Render (Cloud Web Service) + Aiven (Managed MySQL) |
+| **Version Control** | Git / GitHub |
+| **Containerization** | Docker (Dockerfile + docker-compose for local dev) |
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Key Features
 
-## Contributing
+### 👩‍💼 Customer-Facing Website
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Service Catalog** — Browse all salon services and packages with pricing and descriptions
+- **Online Booking System** — Step-by-step booking flow: choose service/package → select employee → pick date/time → confirm
+- **Booking Tracking** — Track appointment status using a unique barcode reference
+- **Gallery** — Visual showcase of salon work
+- **FAQ Section** — Common questions answered
+- **Contact Form** — Sends email notification on submission
+- **WhatsApp Integration** — Floating WhatsApp button for instant communication
+- **Fully Responsive** — Built with Tailwind CSS, optimized for mobile, tablet, and desktop
+- **Bilingual (AR/EN)** — Full Arabic and English interfaces with RTL/LTR support
 
-## Code of Conduct
+### 🔐 Role-Based Dashboards
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Admin Dashboard
+- Complete CRUD management for **services**, **packages**, **employees**, **customers**, and **appointments**
+- **Performance Reports** — Employee performance metrics and booking statistics
+- **Schedule Management** — Manage weekly availability for each employee
+- **Appointment Assignment** — Assign unassigned bookings to employees
+- **Real-time Insights** — Dashboard stats: total bookings, revenue, active customers, etc.
 
-## Security Vulnerabilities
+#### Employee Dashboard
+- View personal daily/weekly appointment schedule
+- Mark appointments as completed or no-show
+- View booking details and customer information
+- Performance rating display
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Customer Portal
+- View personal booking history and status
+- Modify or cancel upcoming appointments
+- Update profile information
+- Guest editing via barcode reference (no login required)
+
+### 🔧 Technical Highlights
+
+- **Role-Based Access Control** — Three distinct user roles with granular permissions using Spatie
+- **Queue & Background Jobs** — Email notifications, appointment expiry handled asynchronously
+- **Database Migrations & Seeders** — Reproducible schema and sample data
+- **Custom Middleware** — Role verification, booking ownership, and authorization middleware
+- **Barcode Integration** — Unique reference code per booking for guest tracking
+- **Environment Configuration** — Multi-environment setup (local, staging, production)
+- **Docker Support** — `Dockerfile` and `docker-compose.yml` for consistent local development
+
+---
+
+## Screenshots
+
+> _Coming soon — UI screenshots demonstrating the public website, admin dashboard, and booking flow._
+
+---
+
+## Getting Started (Local Development)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Atef-alsaadouny/RAWNAQ-AL-NUJOOM.git
+cd RAWNAQ-AL-NUJOOM
+
+# 2. Install PHP dependencies
+composer install
+
+# 3. Install frontend dependencies
+npm install && npm run build
+
+# 4. Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# 5. Configure your database in .env, then run:
+php artisan migrate --seed
+
+# 6. Start the development server
+php artisan serve
+
+# 7. In a separate terminal, compile assets:
+npm run dev
+```
+
+---
+
+## Project Structure (High-Level)
+
+```
+├── app/
+│   ├── Http/Controllers/       # Route controllers (Admin, Customer, Employee, Auth, etc.)
+│   ├── Models/                  # Eloquent models
+│   ├── Mail/                    # Mailable classes (booking confirmation, contact form)
+│   ├── Services/                # Business logic layer
+│   ├── Middleware/              # Custom middleware (role checks, etc.)
+│   └── helpers.php             # Global helper functions
+├── resources/views/            # Blade templates (public, admin, customer, employee, auth)
+│   ├── layouts/                # Layout files (public, admin, customer, employee, guest)
+│   ├── components/             # Reusable Blade components
+│   └── partials/               # Include partials (flash messages, WhatsApp button)
+├── routes/
+│   ├── web.php                 # Public & authenticated web routes
+│   ├── auth.php                # Authentication routes
+│   ├── admin.php               # Admin-specific routes
+│   ├── employee.php            # Employee-specific routes
+│   └── console.php             # Scheduled tasks
+├── public/                     # Entry point (index.php), assets, images
+├── config/                     # Application configuration
+├── database/
+│   ├── migrations/             # Database schema migrations
+│   └── seeders/                # Seed data for development
+├── docker-compose.yml          # Local Docker setup
+└── Dockerfile                  # Production build image
+```
+
+---
+
+## What This Project Demonstrates
+
+To a **technical recruiter** or **engineering manager**, this project shows:
+
+- **Full-stack capability** — From database schema design and backend API logic to responsive frontend UI and cloud deployment
+- **Clean architecture** — Separation of concerns (Controllers, Services, Models), middleware abstraction, and reusable components
+- **Production mindset** — Real-world features (authentication, authorization, payments, email, scheduling, queueing, error pages)
+- **Code quality** — Organized routes, meaningful commit history, structured views, and consistent coding patterns
+- **DevOps awareness** — Docker setup, environment configuration, deployment to Render with managed database hosting
+- **UX consideration** — Responsive design, bilingual support, intuitive booking flow, mobile-first approach
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced under the MIT license.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by <a href="https://github.com/Atef-alsaadouny">Atef Alsaadouny</a></p>
+  <p>
+    <a href="https://rawnaq-al-nujoom.onrender.com/">Live Demo</a> ·
+    <a href="https://github.com/Atef-alsaadouny/RAWNAQ-AL-NUJOOM">GitHub Repository</a>
+  </p>
+</div>

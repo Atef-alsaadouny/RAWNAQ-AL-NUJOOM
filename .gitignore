@@ -28,4 +28,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /backups
-composer.phar
+*.phar
+/database/sqlite.db
+/database/*.sqlite
